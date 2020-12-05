@@ -1,3 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
+using Sidekick.Controllers;
+using Sidekick.Models;
 using System;
 using Xunit;
 
@@ -8,23 +11,26 @@ namespace Sidekick.Test
         [Fact]
         public void GetIndex()
         {
-            //Arrange
-            //Act
-            //Assert
+            // Arrange
+            var homeController = new HomeController(null);
+
+            // Act
+            var result = homeController.Index();
+            
+            // Assert
+            Assert.IsType<ViewResult>(result);
         }
         [Fact]
         public void GetPrivacy()
         {
-            //Arrange
-            //Act
-            //Assert
-        }
-        [Fact]
-        public void GetError()
-        {
-            //Arrange
-            //Act
-            //Assert
+            // Arrange
+            var homeController = new HomeController(null);
+
+            // Act
+            var result = homeController.Privacy();
+
+            // Assert
+            Assert.IsType<ViewResult>(result);
         }
     }
 }
