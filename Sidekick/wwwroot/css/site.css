@@ -61,11 +61,79 @@ html {
 body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
+  height: 100%;
 }
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px; /* Vertically center the text there */
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px; /* Vertically center the text there */
+    background-color: #343a40;
+    color: white;
+}
+/* Landing page
+-------------------------------------------------- */
+.landing-page {
+    margin: 0 -15px 0 -15px;
+    color: #fff;
+}
+
+.landing-page-quote {
+    font-size: 2.0rem;
+    text-align: center;
+    padding-top: 36px;
+}
+
+@media (max-width: 575.98px) {
+    .landing-page-quote {
+        font-size: 1.3rem;
+    }
+}
+/* Small devices (landscape phones, 576px and up) */
+@media (min-width: 576px) and (max-width: 767.98px) {
+    .landing-page-quote {
+        font-size: 1.3rem;
+    }
+}
+
+/* Medium devices (tablets, 768px and up) */
+@media (min-width: 768px) and (max-width: 991.98px) {
+    .landing-page-quote {
+        font-size: 1.6rem;
+    }
+}
+
+/* Large devices (desktops, 992px and up) */
+@media (min-width: 992px) and (max-width: 1199.98px) {
+    .landing-page-quote {
+        font-size: 2.2rem;
+    }
+}
+
+/* Extra large devices (large desktops, 1200px and up) */
+@media (min-width: 1200px) {
+    .landing-page-quote {
+        font-size: 2.7rem;
+    }
+}
+
+.landing-page-author {
+    position: relative;
+    top: 30px;
+    left: -100px;
+    color: #FFF;
+    font-size: 1.0rem;
+}
+
+.landing-page-image {
+    position: absolute;
+    margin: -17px -15px 0 -15px;
+    background-image: url("/images/brooke-cagle-g1Kr4Ozfoac-unsplash.jpg");
+    height: calc(100% - 57px);
+    width: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    color: #fff;
 }
