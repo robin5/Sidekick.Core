@@ -1,0 +1,169 @@
+﻿@*
+    **********************************************************************************
+    * Copyright (c) 2020 Robin Murray
+    **********************************************************************************
+    *
+    * File: Index.cshtml
+    *
+    * Description: View for  DashboardController
+    *
+    * Author: Robin Murray
+    *
+    **********************************************************************************
+    *
+    * Granting License: The MIT License (MIT)
+    *
+    *   Permission is hereby granted, free of charge, to any person obtaining a copy
+    *   of this software and associated documentation files (the "Software"), to deal
+    *   in the Software without restriction, including without limitation the rights
+    *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    *   copies of the Software, and to permit persons to whom the Software is
+    *   furnished to do so, subject to the following conditions:
+    *   The above copyright notice and this permission notice shall be included in
+    *   all copies or substantial portions of the Software.
+    *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    *   THE SOFTWARE.
+    *
+    **********************************************************************************
+*@
+
+@model Sidekick.Models.DashboardViewModel
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+<div class="container dsh-container">
+    <div class="dsh-title">
+        <h2 style="text-align: center;">THE PROCESS</h2>
+    </div>
+    <!-------------------------------------------------->
+    <div class="dsh-content">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible" role="alert">
+                @TempData["SuccessMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        else if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible" role="alert">
+                @TempData["ErrorMessage"]
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        }
+        <ol class="dsh-process">
+            <li><a asp-area="" asp-controller="Survey" asp-action="Create">Create a survey</a></li>
+            <li><a asp-area="" asp-controller="Team" asp-action="Create">Create a peer group</a></li>
+            <li><a asp-area="" asp-controller="LaunchedSurvey" asp-action="Create">Send a survey to one or more peer groups</a></li>
+        </ol><!-- dashboard navigation -->
+        <hr>
+        <div>
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#surveys" aria-expanded="false" aria-controls="collapseExample">
+                <h4>Peer Surveys&nbsp;&raquo;</h4>
+            </button>
+        </div><!-- surveys button -->
+        <br>
+        <div id="surveys" class="collapse">
+                <div style="display: flex; flex-wrap: wrap; margin-left: 20px;">
+
+                    @* Generate survey instance cards *@
+
+                    @if (Model.Surveys.Count() > 0)
+                    {
+                        foreach (var survey in Model.Surveys)
+                        {
+                            <div class="card">
+                                <div class="card-body dsh-card-survey">
+                                    <h5><a asp-area="" asp-controller="Survey" asp-action="Index" asp-route-id="@survey.Id">@survey.Name</a></h5>
+                                </div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="dsh-no-items"><p>None defined - Execute step 1 above to define a peer survey.</p></div>
+                    }
+
+                </div><!-- surveys collapse button -->
+            <hr>
+        </div><!-- surveys collapse -->
+        <div>
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#teams" aria-expanded="false" aria-controls="collapseExample">
+                <h4>Peer Groups&nbsp;&raquo;</h4>
+            </button>
+        </div><!-- teams button -->
+        <br>
+        <div id="teams" class="collapse">
+            <div style="display: flex; flex-wrap: wrap; margin-left: 20px;">
+
+                @* Generate survey instance cards *@
+
+                @if (Model.Teams.Count() > 0)
+                {
+                    foreach (var team in Model.Teams)
+                    {
+                        <div class="card">
+                            <div class="card-body dsh-card-team">
+                                <h5><a asp-area="" asp-controller="Team" asp-action="Index" asp-route-id="@team.Id">@team.Name</a></h5>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="dsh-no-items"><p>None defined - Execute step 2 above to define a peer group.</p></div>
+                }
+
+            </div><!-- team -->
+            <hr>
+        </div><!-- teams collapse -->
+        <div>
+            <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#launched" aria-expanded="false" aria-controls="collapseExample">
+                <h4>Launched Surveys&nbsp;&raquo;</h4>
+            </button>
+        </div><!-- launched surveys button -->
+        <br>
+        <div id="launched" class="collapse">
+
+            <div style="display: flex; flex-wrap: wrap; margin-left: 20px;">
+
+                @* Generate launched survey cards *@
+
+                @if (Model.LaunchedSurveys.Count() > 0)
+                {
+                    foreach (var surveyInstance in Model.LaunchedSurveys)
+                    {
+                        <div class="card dsh-card-launched">
+                            <div class="card-body">
+                                <ul class="list-group list-group-flush">
+                                    <li class="list-group-item">
+                                        <h5 class="card-title">
+                                            <a asp-area="" asp-controller="LaunchedSurvey" asp-action="Index" asp-route-id="@surveyInstance.Id">@surveyInstance.Name</a>
+                                        </h5>
+                                    </li>
+                                    <li class="list-group-item"><strong>Start: </strong><br>@(surveyInstance.Start)</li>
+                                    <li class="list-group-item"><strong>End: </strong><br>@(surveyInstance.End)</li>
+                                    <li class="list-group-item"><strong>Status: </strong><br>@(surveyInstance.Status)</li>
+                                </ul>
+                            </div><!-- card-body -->
+                        </div><!-- card -->
+                    }
+                }
+                else
+                {
+                    <div class="dsh-no-items"><p>None defined - Execute steps 1 through 3 above to define a survey launch.</p></div>
+                }
+            </div><!-- flex row -->
+        </div><!-- launched surveys collapse -->
+    </div>
+</div><!-- dsh-container -->

@@ -59,9 +59,12 @@ html {
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
-  height: 100%;
+    background-image: linear-gradient(#333, #CCC);
+    background-attachment: fixed;
+    Background-color: #333;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    height: 100%;
 }
 .footer {
     position: absolute;
@@ -137,3 +140,70 @@ body {
     background-size: cover;
     color: #fff;
 }
+
+/* Dashboard
+-------------------------------------------------- */
+
+.dsh-container {
+    margin-top: 40px;
+}
+
+.dsh-title {
+    text-align: center;
+    border-radius: 20px 20px 0 0;
+    padding: 10px 20px 10px 20px;
+    width: 100%;
+    margin: 2px auto 0 auto;
+    background-color: #777;
+    color: #FFF;
+    letter-spacing: 3px;
+}
+
+.dsh-content {
+    padding: 20px;
+    background-color: #DDD;
+    border-radius: 0 0 20px 20px;
+}
+
+.dsh-content-image {
+    margin-bottom: 11px;
+}
+
+.dsh-process {
+    margin-left: -20px;
+    color: #000;
+    font-weight: 500;
+}
+
+.dsh-process a:link,
+.dsh-process a:visited {
+    color: #000;
+}
+
+.dsh-process a:hover,
+.dsh-process a:active {
+    font-weight: 700;
+}
+
+.dsh-no-items {
+    margin-left: 20px;
+}
+
+.dsh-card-survey {
+    width: 16rem;
+    color: #000;
+    border-radius: 5px;
+}
+
+.dsh-card-team {
+    width: 16rem;
+    color: #000;
+    border-radius: 5px;
+}
+
+.dsh-card-launched {
+    width: 16rem;
+    color: #000;
+    border-radius: 5px;
+}
+
