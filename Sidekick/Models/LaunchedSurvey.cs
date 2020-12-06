@@ -1,8 +1,8 @@
 ﻿// **********************************************************************************
-// * Copyright (c) 2019 Robin Murray
+// * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: EvaluationInstance.cs
+// * File: LaunchedSurvey.cs
 // *
 // * Author: Robin Murray
 // *
