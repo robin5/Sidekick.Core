@@ -2,9 +2,9 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: DashboardControllerTest.cs
+// * File: SurveyControllerTests.cs
 // *
-// * Description: Tests for DashboardController
+// * Description: Tests for SurveyController
 // *
 // * Author: Robin Murray
 // *
@@ -30,44 +30,65 @@
 // * 
 // **********************************************************************************
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Sidekick.Controllers;
 using Sidekick.Models;
+using Sidekick.ViewModels;
 using Xunit;
 
 namespace Sidekick.Test
 {
-    public class DashboardControllerTests
+    public class SurveyControllerTests
     {
         [Fact]
-        public void GetIndex()
+        public void GetIndexBadId()
         {
             // Arrange
             var repository = new MockRepository();
-            var surveys = repository.GetAllSurveyNameIds("TBD");
-            var teams = repository.GetTeams();
-            var launchedSurveys = repository.GetLaunchedSurveys();
 
-            var dashboardController = new DashboardController(null, repository);
+            var surveyController = new SurveyController(null, repository);
 
             // Act
-            var result = dashboardController.Index();
+            var result = surveyController.Index(99);
+
+            // Assert
+            Assert.IsType<RedirectToActionResult>(result);
+            RedirectToActionResult redirectToActionResult = result as RedirectToActionResult;
+
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+            Assert.Equal("Dashboard", redirectToActionResult.ControllerName);
+        }
+
+        [Fact]
+        public void GetIndexGoodId()
+        {
+            // Arrange
+            var repository = new MockRepository();
+            var survey = new Survey()
+            {
+                Id = 1,
+                Name = "F2022 CTEC-235 SUMMER",
+                Questions = new List<string>() { "Q1", }
+            };
+            repository.AddSurvey("TestUser", survey);
+
+            var surveyController = new SurveyController(null, repository);
+
+            // Act
+            var result = surveyController.Index(1);
 
             // Assert
             Assert.IsType<ViewResult>(result);
             ViewResult view = result as ViewResult;
 
-            Assert.IsType<DashboardViewModel>(view.Model);
-            DashboardViewModel model = view.Model as DashboardViewModel;
-            
-            Assert.Equal(surveys.Count(), model.Surveys.Count());
-            Assert.Equal(teams.Count(), model.Teams.Count());
-            Assert.Equal(launchedSurveys.Count(), model.LaunchedSurveys.Count());
+            Assert.IsType<SurveyIndexViewModel>(view.Model);
+            SurveyIndexViewModel model = view.Model as SurveyIndexViewModel;
+
+            Assert.Equal(survey.Id, model.Id);
+            Assert.Equal(survey.Name, model.Name);
+            Assert.Equal(survey.Questions.Count(), model.Questions.Count());
         }
     }
 }
