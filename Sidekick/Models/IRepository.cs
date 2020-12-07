@@ -34,8 +34,16 @@ namespace Sidekick.Models
 {
     public interface IRepository
     {
-        IEnumerable<Survey> GetSurveys();
-        IEnumerable<Team> GetTeams();
+        #region Surveys
+        Survey AddSurvey(string AspNetId, Survey survey);
+        Survey GetSurvey(string AspNetId, int id);
+        Survey UpdateSurvey(string AspNetId, Survey survey);
+        Survey DeleteSurvey(string AspNetId, int id);
+        #endregion
+
+        IEnumerable<SurveyNameId> GetAllSurveyNameIds(string AspNetId);
+
+        IEnumerable<TeamNameId> GetTeams();
         IEnumerable<LaunchedSurvey> GetLaunchedSurveys();
     }
 }

@@ -2,9 +2,7 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: DashboardControllerTest.cs
-// *
-// * Description: Tests for DashboardController
+// * File: SurveyController.cs
 // *
 // * Author: Robin Murray
 // *
@@ -30,44 +28,46 @@
 // * 
 // **********************************************************************************
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Sidekick.Controllers;
+using Microsoft.Extensions.Logging;
+using Sidekick.ViewModels;
 using Sidekick.Models;
-using Xunit;
 
-namespace Sidekick.Test
+namespace Sidekick.Controllers
 {
-    public class DashboardControllerTests
+    [Authorize(Policy = "SurveyOwner")]
+    public class SurveyController : Controller
     {
-        [Fact]
-        public void GetIndex()
+        private readonly ILogger<DashboardController> logger;
+        private readonly IRepository repository;
+        private string userId = null;
+
+        public SurveyController(
+            ILogger<DashboardController> logger,
+            IRepository repository)
         {
-            // Arrange
-            var repository = new MockRepository();
-            var surveys = repository.GetAllSurveyNameIds();
-            var teams = repository.GetTeams();
-            var launchedSurveys = repository.GetLaunchedSurveys();
+            this.logger = logger;
+            this.repository = repository;
+            userId = "robin";
+        }
 
-            var dashboardController = new DashboardController(null, repository);
+        // GET: Displays a survey with the "Index" view
+        public IActionResult Index(int id)
+        {
+            var survey = repository.GetSurvey(userId, id);
+            if (null == survey)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+            var viewModel = new SurveyIndexViewModel()
+            {
+                Id = survey.Id,
+                Name = survey.Name,
+                Questions = survey.Questions
+            };
 
-            // Act
-            var result = dashboardController.Index();
-
-            // Assert
-            Assert.IsType<ViewResult>(result);
-            ViewResult view = result as ViewResult;
-
-            Assert.IsType<DashboardViewModel>(view.Model);
-            DashboardViewModel model = view.Model as DashboardViewModel;
-            
-            Assert.Equal(surveys.Count(), model.Surveys.Count());
-            Assert.Equal(teams.Count(), model.Teams.Count());
-            Assert.Equal(launchedSurveys.Count(), model.LaunchedSurveys.Count());
+            return View(viewModel);
         }
     }
 }

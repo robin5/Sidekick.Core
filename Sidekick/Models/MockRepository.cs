@@ -29,79 +29,149 @@
 // **********************************************************************************
 
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sidekick.Models
 {
     public class MockRepository : IRepository
     {
-        IEnumerable<Survey> surveys = null;
-        IEnumerable<Team> teams = null;
-        IEnumerable<LaunchedSurvey> launchedSurveys = null;
-        public IEnumerable<Survey> GetSurveys()
-        {
-            surveys = new List<Survey>()
+        private static int _nextSurveyId = 1;
+        private static int NextSurveyId 
+        { 
+            get { return _nextSurveyId++; } 
+        }
+
+        List<SurveyNameId> surveyNameIds = new List<SurveyNameId>()
             {
                 #region Survey definitions
-                new Survey()
+                new SurveyNameId()
                 {
                     Name = "F2020 CTEC-126 FALL",
                     Id = 1
                 },
-                new Survey()
+                new SurveyNameId()
                 {
                     Name = "F2021 CTEC-227 WINTER",
                     Id = 2
                 },
-                new Survey()
+                new SurveyNameId()
                 {
                     Name = "F2021 CTEC-290 SPRING",
                     Id = 3
                 },
-                new Survey()
+                new SurveyNameId()
                 {
                     Name = "F2021 CTEC-235 SUMMER",
                     Id = 4
                 },
-                new Survey()
+                new SurveyNameId()
                 {
                     Name = "F2021 CTEC-126 FALL",
                     Id = 5
                 },
-                new Survey()
+                new SurveyNameId()
                 {
                     Name = "F2022 CTEC-227 WINTER",
                     Id = 6
                 },
-                new Survey()
+                new SurveyNameId()
                 {
                     Name = "F2022 CTEC-290 SPRING",
                     Id = 7
                 },
-                new Survey()
+                new SurveyNameId()
                 {
                     Name = "F2022 CTEC-235 SUMMER",
                     Id = 8
                 }
                 #endregion
             };
-            return surveys;
-        }
-        public IEnumerable<Team> GetTeams()
+        IEnumerable<TeamNameId> teams = null;
+        IEnumerable<LaunchedSurvey> launchedSurveys = null;
+        List<Survey> surveys = new List<Survey>() 
         {
-            teams = new List<Team>()
+                new Survey()
+                {
+                    AspNetId = "robin",
+                    Id = 1,
+                    Name = "F2022 CTEC-235 SUMMER",
+                    Questions = new List<string>()
+                    {
+                        "Question 1",
+                        "Question 2",
+                        "Question 3",
+                    }
+                }
+        };
+
+        #region Survey
+        public Survey AddSurvey(string AspNetId, Survey survey) 
+        {
+            survey.AspNetId = AspNetId;
+            survey.Id = NextSurveyId;
+            surveys.Add(survey);
+            return survey;
+        }
+        public Survey DeleteSurvey(string AspNetId, int id)
+        {
+            Survey survey = surveys.FirstOrDefault(e => ((e.Id == id) && (e.AspNetId == AspNetId)));
+            if (null != survey)
+            {
+                surveys.Remove(survey);
+            }
+            return survey;
+        }
+        public Survey GetSurvey(string AspNetId, int id)
+        {
+            return surveys.FirstOrDefault(e => ((e.Id == id) && (e.AspNetId == AspNetId)));
+        }
+        public Survey UpdateSurvey(string AspNetId, Survey updatedSurvey)
+        {
+            Survey survey = surveys.FirstOrDefault(e => ((e.Id == updatedSurvey.Id) && (e.AspNetId == AspNetId)));
+            if (null != survey)
+            {
+                survey.AspNetId = AspNetId;
+                survey.Id = updatedSurvey.Id;
+                survey.Name = updatedSurvey.Name;
+                survey.Questions = updatedSurvey.Questions;
+            }
+            return survey;
+        }
+        #endregion
+
+        public IEnumerable<SurveyNameId> GetAllSurveyNameIds(string AspNetId)
+        {
+            surveyNameIds = new List<SurveyNameId>();
+
+            var result = surveys.FindAll(e => e.AspNetId == AspNetId);
+
+            foreach (var surveyNameId in result)
+            {
+                surveyNameIds.Add(new SurveyNameId()
+                {
+                    Name = surveyNameId.Name,
+                    Id = surveyNameId.Id
+                });
+            }
+            return surveyNameIds;
+        }
+
+        public IEnumerable<TeamNameId> GetTeams()
+        {
+            teams = new List<TeamNameId>()
             {
                 #region Team definitions
-                new Team()
+                new TeamNameId()
                 {
                     Name = "Team 1",
                     Id = 1
                 },
-                new Team()
+                new TeamNameId()
                 {
                     Name = "Team 2",
                     Id = 2
                 },
-                new Team()
+                new TeamNameId()
                 {
                     Name = "Team 3",
                     Id = 3

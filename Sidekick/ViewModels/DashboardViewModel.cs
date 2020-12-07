@@ -36,8 +36,8 @@ namespace Sidekick.Models
 {
     public class DashboardViewModel
     {
-        public IEnumerable<Survey> Surveys { get; set; }
-        public IEnumerable<Team> Teams { get; set; }
+        public IEnumerable<SurveyNameId> Surveys { get; set; }
+        public IEnumerable<TeamNameId> Teams { get; set; }
         public IEnumerable<LaunchedSurvey> LaunchedSurveys { get; set; }
     }
 }

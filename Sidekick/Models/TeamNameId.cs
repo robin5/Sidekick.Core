@@ -30,7 +30,7 @@
 
 namespace Sidekick.Models
 {
-    public class Team
+    public class TeamNameId
     {
         public string Name { get; set; }
         public int Id { get; set; }

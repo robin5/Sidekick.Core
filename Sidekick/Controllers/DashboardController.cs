@@ -40,6 +40,7 @@ namespace Sidekick.Controllers
     {
         private readonly ILogger<DashboardController> logger;
         private readonly IRepository repository;
+        private string userId = "robin";
 
         public DashboardController(
             ILogger<DashboardController> logger,
@@ -53,7 +54,7 @@ namespace Sidekick.Controllers
         {
             var model = new DashboardViewModel
             {
-                Surveys = repository.GetSurveys(),
+                Surveys = repository.GetAllSurveyNameIds(userId),
                 Teams = repository.GetTeams(),
                 LaunchedSurveys = repository.GetLaunchedSurveys()
             };
