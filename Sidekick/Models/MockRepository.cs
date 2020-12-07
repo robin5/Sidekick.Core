@@ -97,9 +97,9 @@ namespace Sidekick.Models
                     Name = "F2022 CTEC-235 SUMMER",
                     Questions = new List<string>()
                     {
-                        "Question 1",
-                        "Question 2",
-                        "Question 3",
+                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce gravida libero pretium condimentum dignissim. Vestibulum eu elementum enim. Sed congue sapien ligula, nec posuere urna commodo quis. Suspendisse potenti. Aliquam in facilisis purus. Mauris rhoncus eget lectus sed luctus. Nulla non eros sem.",
+                        "Integer ullamcorper condimentum hendrerit. Quisque urna nibh, dignissim in ex pulvinar, eleifend fermentum ante. Nulla consectetur dolor et ligula hendrerit, ut elementum erat elementum. Praesent ornare vulputate ipsum, ut fringilla purus suscipit sed. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ",
+                        "Donec varius varius suscipit. Phasellus egestas ex accumsan, blandit tellus id, efficitur tellus. Curabitur vehicula neque vel elit venenatis faucibus. Aliquam id justo malesuada, fringilla dolor ut, facilisis massa. Nam bibendum sed nunc venenatis facilisis. Aenean neque mauris, suscipit non varius ut, egestas a nisl. Quisque porta consectetur tellus, vitae commodo augue semper in. Nunc arcu ante, varius id augue ullamcorper, consectetur suscipit enim. Ut dignissim elementum metus a eleifend. Pellentesque sed velit felis.",
                     }
                 }
         };

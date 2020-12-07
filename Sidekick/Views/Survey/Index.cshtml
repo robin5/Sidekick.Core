@@ -36,11 +36,10 @@
 
 @{
     var surveyName = @Model.Name;
-    var questionIndex = 1;
     ViewData["Title"] = surveyName;
 }
 
-<div class="container-md dsh-container">
+<div class="container dsh-container">
     <div class="dsh-title">
         <h2>@surveyName</h2>
     </div>
@@ -51,15 +50,14 @@
             <li>@Html.ActionLink("Back to dashboard", "Index", "Dashboard")</li>
         </ul>
         <hr>
-        <div id="vs-survey-questions" class="vs-survey-questions">
             @* Generate survey instance cards *@
 
             @if (Model.Questions.Count() > 0)
             {
-                <ol>
+                <ol class="vs-questions">
                     @foreach (var question in Model.Questions)
                     {
-                        <li class="vs-td-question">@question</li>
+                        <li class="vs-question">@question</li>
                     }
                 </ol>
             }
@@ -67,7 +65,6 @@
             {
                 <div style="margin-left: 20px"><p>None defined.</p></div>
             }
-        </div>
 
         @await Html.PartialAsync("~/Views/Shared/_DeleteModal.cshtml",
             new ViewDataDictionary(ViewData) {

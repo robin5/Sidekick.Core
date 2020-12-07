@@ -207,3 +207,13 @@ body {
     border-radius: 5px;
 }
 
+/* SurveyController Index view
+-------------------------------------------------- */
+
+ol.vs-questions {
+    margin-left: -20px;
+}
+
+li.vs-question:not(:last-child) {
+    margin-bottom: .6rem;
+}
