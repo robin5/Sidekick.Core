@@ -28,12 +28,14 @@
 // * 
 // **********************************************************************************
 
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sidekick.Models;
 
 namespace Sidekick.Controllers
 {
+    [Authorize(Policy = "SurveyOwner")]
     public class DashboardController : Controller
     {
         private readonly ILogger<DashboardController> logger;
