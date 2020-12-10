@@ -101,7 +101,7 @@ namespace Sidekick.Models
             return surveyNameIds;
         }
 
-        public IEnumerable<TeamNameId> GetTeams()
+        public IEnumerable<TeamNameId> GetTeams(string userId)
         {
             teams = new List<TeamNameId>()
             {
@@ -125,7 +125,7 @@ namespace Sidekick.Models
             };
             return teams;
         }
-        public IEnumerable<LaunchedSurvey> GetLaunchedSurveys()
+        public IEnumerable<LaunchedSurvey> GetLaunchedSurveys(string userId)
         {
             launchedSurveys = new List<LaunchedSurvey>()
             {

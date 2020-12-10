@@ -34,6 +34,7 @@ using Microsoft.Extensions.Logging;
 using Sidekick.ViewModels;
 using Sidekick.Models;
 using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace Sidekick.Controllers
 {
@@ -42,25 +43,29 @@ namespace Sidekick.Controllers
     {
         private readonly ILogger<DashboardController> logger;
         private readonly IRepository repository;
-        private string userId = null;
+        private readonly IIdentityHelper identityHelper;
 
         public SurveyController(
             ILogger<DashboardController> logger,
-            IRepository repository)
+            IRepository repository,
+            IIdentityHelper identityHelper)
         {
             this.logger = logger;
             this.repository = repository;
-            userId = "robin";
+            this.identityHelper = identityHelper;
         }
 
         // GET: Displays a survey with the "Index" view
         public IActionResult Index(int id)
         {
+            var userId = identityHelper.GetUserId(User);
+
             var survey = repository.GetSurvey(userId, id);
             if (null == survey)
             {
                 return RedirectToAction("Index", "Dashboard");
             }
+
             var viewModel = new SurveyIndexViewModel()
             {
                 Id = survey.Id,
@@ -81,6 +86,8 @@ namespace Sidekick.Controllers
         [HttpPost]
         public ActionResult Create(SurveyCreateViewModel model)
         {
+            var userId = identityHelper.GetUserId(User);
+
             try
             {
                 if (!ModelState.IsValid)

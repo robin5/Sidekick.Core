@@ -33,6 +33,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
@@ -41,18 +42,19 @@ using Sidekick.Controllers;
 using Sidekick.Models;
 using Sidekick.ViewModels;
 using Xunit;
+using MockRepository = Sidekick.Models.MockRepository;
 
 namespace Sidekick.Test
 {
-    public class SurveyControllerTests
+    public class SurveyControllerTests : ControllerTest
     {
         [Fact]
         public void Get_Index_BadId()
         {
             // Arrange
-            var repository = new Sidekick.Models.MockRepository();
+            var repository = new MockRepository();
 
-            var surveyController = new SurveyController(null, repository);
+            var surveyController = new SurveyController(null, repository, IdentityHelper);
 
             // Act
             var result = surveyController.Index(1);
@@ -70,19 +72,17 @@ namespace Sidekick.Test
         {
             // Arrange
             var repository = new Sidekick.Models.MockRepository();
-            var survey = new Survey()
+            var survey = repository.AddSurvey(new Survey()
             {
-                UserId = "robin",
-                Id = 1,
+                UserId = UserId,
                 Name = "F2022 CTEC-235 SUMMER",
                 Questions = new List<string>() { "Q1", }
-            };
-            repository.AddSurvey(survey);
+            });
 
-            var surveyController = new SurveyController(null, repository);
+            var surveyController = new SurveyController(null, repository, IdentityHelper);
 
             // Act
-            var result = surveyController.Index(1);
+            var result = surveyController.Index(survey.Id);
 
             // Assert
             Assert.IsType<ViewResult>(result);
@@ -102,7 +102,7 @@ namespace Sidekick.Test
             // Arrange
             var repository = new Sidekick.Models.MockRepository();
 
-            var surveyController = new SurveyController(null, repository);
+            var surveyController = new SurveyController(null, repository, IdentityHelper);
 
             // Act
             var result = surveyController.Create();
@@ -120,7 +120,7 @@ namespace Sidekick.Test
             // Arrange
             var repository = new Sidekick.Models.MockRepository();
 
-            var surveyController = new SurveyController(null, repository);
+            var surveyController = new SurveyController(null, repository, IdentityHelper);
             surveyController.ModelState.AddModelError("sesion", "required");
 
             var surveyName = "Test Survey";
@@ -162,7 +162,7 @@ namespace Sidekick.Test
             var httpContext = new DefaultHttpContext();
             var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
 
-            var surveyController = new SurveyController(null, repository)
+            var surveyController = new SurveyController(null, repository, IdentityHelper)
             {
                 TempData = tempData
             };
@@ -186,7 +186,6 @@ namespace Sidekick.Test
             // Arrange
             var surveyName = "Test Survey";
             var surveyQuestions = new List<string>() { "Q1" };
-            var userId = "robin";
             var databaseError = "Database error";
             var expectedMessage = $"Failed adding { surveyName } to peer surveys: { databaseError }";
 
@@ -198,7 +197,7 @@ namespace Sidekick.Test
 
             Survey survey = new Survey() 
             {
-                UserId = userId,
+                UserId = UserId,
                 Name = surveyName,
                 Questions = surveyQuestions
             };
@@ -214,7 +213,7 @@ namespace Sidekick.Test
             var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
 
             // Create the controler
-            var surveyController = new SurveyController(null, repository.Object)
+            var surveyController = new SurveyController(null, repository.Object, IdentityHelper)
             {
                 TempData = tempData
             };

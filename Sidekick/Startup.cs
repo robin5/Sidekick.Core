@@ -75,6 +75,7 @@ namespace Sidekick
             // New App Services -------------------------------------------------
 
             services.AddSingleton<IRepository, MockRepository>();
+            services.AddSingleton<IIdentityHelper, IdentityHelper>();
 
             services.AddAuthorization(options =>
             {

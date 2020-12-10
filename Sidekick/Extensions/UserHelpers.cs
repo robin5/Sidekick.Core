@@ -2,7 +2,9 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: IRepository.cs
+// * File: UserHelpers.cs
+// *
+// * Description: implements helpers for obtaing user information from user claims
 // *
 // * Author: Robin Murray
 // *
@@ -28,21 +30,18 @@
 // * 
 // **********************************************************************************
 
-using System.Collections.Generic;
+using System.Security.Claims;
+using System.Security.Principal;
 
-namespace Sidekick.Models
+namespace Sidekick
 {
-    public interface IRepository
+    public static class UserHelpers
     {
-        #region Surveys
-        Survey AddSurvey(Survey survey);
-        Survey GetSurvey(string AspNetId, int id);
-        Survey UpdateSurvey(string AspNetId, Survey survey);
-        Survey DeleteSurvey(string AspNetId, int id);
-        #endregion
-
-        IEnumerable<SurveyNameId> GetAllSurveyNameIds(string userId);
-        IEnumerable<TeamNameId> GetTeams(string userId);
-        IEnumerable<LaunchedSurvey> GetLaunchedSurveys(string userId);
+        public static string GetUserId(this IPrincipal principal)
+        {
+            var claimsIdentity = (ClaimsIdentity)principal.Identity;
+            var claim = claimsIdentity.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
+            return claim.Value;
+        }
     }
 }

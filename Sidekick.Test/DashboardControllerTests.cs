@@ -33,37 +33,51 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using Sidekick.Controllers;
 using Sidekick.Models;
 using Xunit;
+using MockRepository = Sidekick.Models.MockRepository;
 
 namespace Sidekick.Test
 {
-    public class DashboardControllerTests
+    public class DashboardControllerTests : ControllerTest
     {
         [Fact]
         public void GetIndex()
         {
+            var userId = "TestUser";
+
+            var survey = new Survey()
+            {
+                UserId = userId,
+                Id = 1,
+                Name = "S1",
+                Questions = new List<string>() { "Q1", "Q2", "Q3" }
+            };
+
             // Arrange
             var repository = new MockRepository();
-            var surveys = repository.GetAllSurveyNameIds("TBD");
-            var teams = repository.GetTeams();
-            var launchedSurveys = repository.GetLaunchedSurveys();
 
-            var dashboardController = new DashboardController(null, repository);
+            repository.AddSurvey(survey);
+
+            var surveys = repository.GetAllSurveyNameIds(userId);
+            var teams = repository.GetTeams(userId);
+            var launchedSurveys = repository.GetLaunchedSurveys(userId);
+
+            var dashboardController = new DashboardController(null, repository, IdentityHelper);
 
             // Act
             var result = dashboardController.Index();
 
             // Assert
-            Assert.IsType<ViewResult>(result);
-            ViewResult view = result as ViewResult;
+            ViewResult view = Assert.IsType<ViewResult>(result);
 
-            Assert.IsType<DashboardViewModel>(view.Model);
-            DashboardViewModel model = view.Model as DashboardViewModel;
+            DashboardViewModel model = Assert.IsType<DashboardViewModel>(view.Model);
             
             Assert.Equal(surveys.Count(), model.Surveys.Count());
             Assert.Equal(teams.Count(), model.Teams.Count());

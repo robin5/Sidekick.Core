@@ -29,9 +29,12 @@
 // **********************************************************************************
 
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sidekick.Models;
+using System.Linq;
+using System.Security.Claims;
 
 namespace Sidekick.Controllers
 {
@@ -40,23 +43,27 @@ namespace Sidekick.Controllers
     {
         private readonly ILogger<DashboardController> logger;
         private readonly IRepository repository;
-        private string userId = "robin";
+        private readonly IIdentityHelper identityHelper;
 
         public DashboardController(
             ILogger<DashboardController> logger,
-            IRepository repository)
+            IRepository repository,
+            IIdentityHelper identityHelper)
         {
             this.logger = logger;
             this.repository = repository;
+            this.identityHelper = identityHelper;
         }
 
         public IActionResult Index()
         {
+            var userId = identityHelper.GetUserId(User);
+
             var model = new DashboardViewModel
             {
                 Surveys = repository.GetAllSurveyNameIds(userId),
-                Teams = repository.GetTeams(),
-                LaunchedSurveys = repository.GetLaunchedSurveys()
+                Teams = repository.GetTeams(userId),
+                LaunchedSurveys = repository.GetLaunchedSurveys(userId)
             };
             return View(model);
         }
