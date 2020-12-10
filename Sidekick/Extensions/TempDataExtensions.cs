@@ -34,7 +34,7 @@ namespace Sidekick
 {
     public static class TempDataExtensions
     {
-        const string KEY_SUCCESS_MESSAGE = "SuccesMessage";
+        const string KEY_SUCCESS_MESSAGE = "SuccessMessage";
         const string KEY_ERROR_MESSAGE = "ErrorMessage";
 
         /// <summary>
@@ -42,7 +42,7 @@ namespace Sidekick
         /// </summary>
         /// <param name="tempData"></param>
         /// <param name="message"></param>
-        public static void SuccessMessage(this TempDataDictionary tempData, string message)
+        public static void SetSuccessMessage(this ITempDataDictionary tempData, string message)
         {
             tempData[KEY_SUCCESS_MESSAGE] = message;
         }
@@ -52,7 +52,7 @@ namespace Sidekick
         /// </summary>
         /// <param name="tempData"></param>
         /// <returns></returns>
-        public static string SuccessMessage(this TempDataDictionary tempData)
+        public static string GetSuccessMessage(this ITempDataDictionary tempData)
         {
             return tempData[KEY_SUCCESS_MESSAGE] as string;
         }
@@ -62,7 +62,7 @@ namespace Sidekick
         /// </summary>
         /// <param name="tempData"></param>
         /// <param name="message"></param>
-        public static void ErrorMessage(this TempDataDictionary tempData, string message)
+        public static void SetErrorMessage(this ITempDataDictionary tempData, string message)
         {
             tempData[KEY_ERROR_MESSAGE] = message;
         }
@@ -72,7 +72,7 @@ namespace Sidekick
         /// </summary>
         /// <param name="tempData"></param>
         /// <returns></returns>
-        public static string ErrorMessage(this TempDataDictionary tempData)
+        public static string GetErrorMessage(this ITempDataDictionary tempData)
         {
             return tempData[KEY_ERROR_MESSAGE] as string;
         }

@@ -35,7 +35,7 @@ namespace Sidekick.Models
     public interface IRepository
     {
         #region Surveys
-        Survey AddSurvey(string AspNetId, Survey survey);
+        Survey AddSurvey(Survey survey);
         Survey GetSurvey(string AspNetId, int id);
         Survey UpdateSurvey(string AspNetId, Survey survey);
         Survey DeleteSurvey(string AspNetId, int id);

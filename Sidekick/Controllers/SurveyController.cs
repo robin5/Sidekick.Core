@@ -33,6 +33,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sidekick.ViewModels;
 using Sidekick.Models;
+using System;
 
 namespace Sidekick.Controllers
 {
@@ -68,6 +69,42 @@ namespace Sidekick.Controllers
             };
 
             return View(viewModel);
+        }
+
+        // GET: Create a Survey with the "Create" view
+        public ActionResult Create()
+        {
+            return View(new SurveyCreateViewModel());
+        }
+
+        // POST: Create a Survey with the "Create" view
+        [HttpPost]
+        public ActionResult Create(SurveyCreateViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                var survey = new Survey()
+                {
+                    UserId = userId,
+                    Name = model.Name,
+                    Questions = model.Questions
+                };
+
+                repository.AddSurvey(survey);
+
+                TempData.SetSuccessMessage($"Successfully added {model.Name} to peer surveys.");
+            }
+            catch (Exception ex)
+            {
+                TempData.SetErrorMessage($"Failed adding {model.Name} to peer surveys: " + ex.Message);
+            }
+
+            return RedirectToAction("Index", "Dashboard");
         }
     }
 }

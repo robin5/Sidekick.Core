@@ -217,3 +217,38 @@ ol.vs-questions {
 li.vs-question:not(:last-child) {
     margin-bottom: .6rem;
 }
+
+.sc-container {
+    margin-top: 40px;
+    max-width: 537px;
+}
+.vs-survey-questions {
+    font-size: 1.2em;
+}
+.survey-question-container {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: flex-start;
+    flex: 0 0 800px;
+}
+.survey-question-box {
+    padding-bottom: 10px;
+    width: 100%;
+    min-width: 200px;
+}
+
+.survey-question-box textarea {
+    width: 100%;
+    resize: vertical;
+    height: 6em;
+    min-height: 2.3em;
+}
+
+.survey-delete-box {
+    padding: 0 15px 0 20px;
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+

@@ -41,80 +41,25 @@ namespace Sidekick.Models
             get { return _nextSurveyId++; } 
         }
 
-        List<SurveyNameId> surveyNameIds = new List<SurveyNameId>()
-            {
-                #region Survey definitions
-                new SurveyNameId()
-                {
-                    Name = "F2020 CTEC-126 FALL",
-                    Id = 1
-                },
-                new SurveyNameId()
-                {
-                    Name = "F2021 CTEC-227 WINTER",
-                    Id = 2
-                },
-                new SurveyNameId()
-                {
-                    Name = "F2021 CTEC-290 SPRING",
-                    Id = 3
-                },
-                new SurveyNameId()
-                {
-                    Name = "F2021 CTEC-235 SUMMER",
-                    Id = 4
-                },
-                new SurveyNameId()
-                {
-                    Name = "F2021 CTEC-126 FALL",
-                    Id = 5
-                },
-                new SurveyNameId()
-                {
-                    Name = "F2022 CTEC-227 WINTER",
-                    Id = 6
-                },
-                new SurveyNameId()
-                {
-                    Name = "F2022 CTEC-290 SPRING",
-                    Id = 7
-                },
-                new SurveyNameId()
-                {
-                    Name = "F2022 CTEC-235 SUMMER",
-                    Id = 8
-                }
-                #endregion
-            };
-        IEnumerable<TeamNameId> teams = null;
-        IEnumerable<LaunchedSurvey> launchedSurveys = null;
-        List<Survey> surveys = new List<Survey>() 
+        List<Survey> surveys = new List<Survey>();
+        List<TeamNameId> teams = null;
+        List<LaunchedSurvey> launchedSurveys = null;
+
+        public virtual void AddSurvey2(Survey survey)
         {
-                new Survey()
-                {
-                    AspNetId = "robin",
-                    Id = 1,
-                    Name = "F2022 CTEC-235 SUMMER",
-                    Questions = new List<string>()
-                    {
-                        "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce gravida libero pretium condimentum dignissim. Vestibulum eu elementum enim. Sed congue sapien ligula, nec posuere urna commodo quis. Suspendisse potenti. Aliquam in facilisis purus. Mauris rhoncus eget lectus sed luctus. Nulla non eros sem.",
-                        "Integer ullamcorper condimentum hendrerit. Quisque urna nibh, dignissim in ex pulvinar, eleifend fermentum ante. Nulla consectetur dolor et ligula hendrerit, ut elementum erat elementum. Praesent ornare vulputate ipsum, ut fringilla purus suscipit sed. Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. ",
-                        "Donec varius varius suscipit. Phasellus egestas ex accumsan, blandit tellus id, efficitur tellus. Curabitur vehicula neque vel elit venenatis faucibus. Aliquam id justo malesuada, fringilla dolor ut, facilisis massa. Nam bibendum sed nunc venenatis facilisis. Aenean neque mauris, suscipit non varius ut, egestas a nisl. Quisque porta consectetur tellus, vitae commodo augue semper in. Nunc arcu ante, varius id augue ullamcorper, consectetur suscipit enim. Ut dignissim elementum metus a eleifend. Pellentesque sed velit felis.",
-                    }
-                }
-        };
+
+        }
 
         #region Survey
-        public Survey AddSurvey(string AspNetId, Survey survey) 
+        public virtual Survey AddSurvey(Survey survey) 
         {
-            survey.AspNetId = AspNetId;
             survey.Id = NextSurveyId;
             surveys.Add(survey);
             return survey;
         }
         public Survey DeleteSurvey(string AspNetId, int id)
         {
-            Survey survey = surveys.FirstOrDefault(e => ((e.Id == id) && (e.AspNetId == AspNetId)));
+            Survey survey = surveys.FirstOrDefault(e => ((e.Id == id) && (e.UserId == AspNetId)));
             if (null != survey)
             {
                 surveys.Remove(survey);
@@ -123,14 +68,14 @@ namespace Sidekick.Models
         }
         public Survey GetSurvey(string AspNetId, int id)
         {
-            return surveys.FirstOrDefault(e => ((e.Id == id) && (e.AspNetId == AspNetId)));
+            return surveys.FirstOrDefault(e => ((e.Id == id) && (e.UserId == AspNetId)));
         }
         public Survey UpdateSurvey(string AspNetId, Survey updatedSurvey)
         {
-            Survey survey = surveys.FirstOrDefault(e => ((e.Id == updatedSurvey.Id) && (e.AspNetId == AspNetId)));
+            Survey survey = surveys.FirstOrDefault(e => ((e.Id == updatedSurvey.Id) && (e.UserId == AspNetId)));
             if (null != survey)
             {
-                survey.AspNetId = AspNetId;
+                survey.UserId = AspNetId;
                 survey.Id = updatedSurvey.Id;
                 survey.Name = updatedSurvey.Name;
                 survey.Questions = updatedSurvey.Questions;
@@ -141,9 +86,9 @@ namespace Sidekick.Models
 
         public IEnumerable<SurveyNameId> GetAllSurveyNameIds(string AspNetId)
         {
-            surveyNameIds = new List<SurveyNameId>();
+            var surveyNameIds = new List<SurveyNameId>();
 
-            var result = surveys.FindAll(e => e.AspNetId == AspNetId);
+            var result = surveys.FindAll(e => e.UserId == AspNetId);
 
             foreach (var surveyNameId in result)
             {

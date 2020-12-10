@@ -7,7 +7,7 @@ namespace Sidekick.Models
 {
     public class Survey
     {
-        public string AspNetId;
+        public string UserId;
         public int Id;
         public string Name;
         public IEnumerable<string> Questions;

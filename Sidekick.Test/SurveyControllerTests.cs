@@ -30,9 +30,13 @@
 // * 
 // **********************************************************************************
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Moq;
 using Sidekick.Controllers;
 using Sidekick.Models;
 using Sidekick.ViewModels;
@@ -43,15 +47,15 @@ namespace Sidekick.Test
     public class SurveyControllerTests
     {
         [Fact]
-        public void GetIndexBadId()
+        public void Get_Index_BadId()
         {
             // Arrange
-            var repository = new MockRepository();
+            var repository = new Sidekick.Models.MockRepository();
 
             var surveyController = new SurveyController(null, repository);
 
             // Act
-            var result = surveyController.Index(99);
+            var result = surveyController.Index(1);
 
             // Assert
             Assert.IsType<RedirectToActionResult>(result);
@@ -62,17 +66,18 @@ namespace Sidekick.Test
         }
 
         [Fact]
-        public void GetIndexGoodId()
+        public void Get_Index_GoodId()
         {
             // Arrange
-            var repository = new MockRepository();
+            var repository = new Sidekick.Models.MockRepository();
             var survey = new Survey()
             {
+                UserId = "robin",
                 Id = 1,
                 Name = "F2022 CTEC-235 SUMMER",
                 Questions = new List<string>() { "Q1", }
             };
-            repository.AddSurvey("TestUser", survey);
+            repository.AddSurvey(survey);
 
             var surveyController = new SurveyController(null, repository);
 
@@ -90,5 +95,143 @@ namespace Sidekick.Test
             Assert.Equal(survey.Name, model.Name);
             Assert.Equal(survey.Questions.Count(), model.Questions.Count());
         }
+
+        [Fact]
+        public void Get_Create()
+        {
+            // Arrange
+            var repository = new Sidekick.Models.MockRepository();
+
+            var surveyController = new SurveyController(null, repository);
+
+            // Act
+            var result = surveyController.Create();
+
+            // Assert
+            Assert.IsType<ViewResult>(result);
+            ViewResult view = result as ViewResult;
+
+            Assert.IsType<SurveyCreateViewModel>(view.Model);
+        }
+
+        [Fact]
+        public void Post_Create_ModelStateInvalid()
+        {
+            // Arrange
+            var repository = new Sidekick.Models.MockRepository();
+
+            var surveyController = new SurveyController(null, repository);
+            surveyController.ModelState.AddModelError("sesion", "required");
+
+            var surveyName = "Test Survey";
+            var surveyQuestions = new List<string>() { "Q1", "Q2", "Q3" };
+
+            SurveyCreateViewModel viewModel = new SurveyCreateViewModel()
+            {
+                Name = surveyName,
+                Questions = surveyQuestions
+            };
+
+            // Act
+            var result = surveyController.Create(viewModel);
+
+            // Assert
+            Assert.IsType<ViewResult>(result);
+            ViewResult view = result as ViewResult;
+
+            var resultModel = Assert.IsType<SurveyCreateViewModel>(view.Model);
+            Assert.Equal(surveyName, resultModel.Name);
+            Assert.Equal(surveyQuestions, resultModel.Questions);
+        }
+        
+        [Fact]
+        public void Post_Create_ModelStateValid()
+        {
+            // Arrange
+            var surveyName = "Test Survey";
+            var surveyQuestions = new List<string>() { "Q1", "Q2", "Q3" };
+
+            SurveyCreateViewModel viewModel = new SurveyCreateViewModel()
+            {
+                Name = surveyName,
+                Questions = surveyQuestions
+            };
+
+            var repository = new Sidekick.Models.MockRepository();
+
+            var httpContext = new DefaultHttpContext();
+            var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+
+            var surveyController = new SurveyController(null, repository)
+            {
+                TempData = tempData
+            };
+
+            // Act
+            var result = surveyController.Create(viewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+
+            Assert.Equal("Dashboard", redirectToActionResult.ControllerName);
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+            Assert.DoesNotContain("ErrorMessage", tempData.Keys);
+            Assert.Contains("SuccessMessage", tempData.Keys);
+            Assert.Equal($"Successfully added { surveyName } to peer surveys.", tempData["SuccessMessage"]);
+        }
+        
+        [Fact]
+        public void Post_Create_DatabaseException()
+        {
+            // Arrange
+            var surveyName = "Test Survey";
+            var surveyQuestions = new List<string>() { "Q1" };
+            var userId = "robin";
+            var databaseError = "Database error";
+            var expectedMessage = $"Failed adding { surveyName } to peer surveys: { databaseError }";
+
+            SurveyCreateViewModel viewModel = new SurveyCreateViewModel()
+            {
+                Name = surveyName,
+                Questions = surveyQuestions
+            };
+
+            Survey survey = new Survey() 
+            {
+                UserId = userId,
+                Name = surveyName,
+                Questions = surveyQuestions
+            };
+
+            // Mock the repository to throwing an exception when the AddSurvey call is executed
+            var repository = new Mock<Sidekick.Models.MockRepository>();
+            repository
+                .Setup<Survey>(n => n.AddSurvey(It.IsAny<Survey>()))
+                .Throws(new Exception(databaseError));
+
+            // Define TempData
+            var httpContext = new DefaultHttpContext();
+            var tempData = new TempDataDictionary(httpContext, Mock.Of<ITempDataProvider>());
+
+            // Create the controler
+            var surveyController = new SurveyController(null, repository.Object)
+            {
+                TempData = tempData
+            };
+
+            // Act
+            var result = surveyController.Create(viewModel);
+
+            // Assert
+            var redirectToActionResult = Assert.IsType<RedirectToActionResult>(result);
+
+            Assert.Equal("Dashboard", redirectToActionResult.ControllerName);
+            Assert.Equal("Index", redirectToActionResult.ActionName);
+            Assert.DoesNotContain("SuccessMessage", tempData.Keys);
+            Assert.Contains("ErrorMessage", tempData.Keys);
+            Assert.Equal(expectedMessage, tempData["ErrorMessage"]);
+        }
     }
 }
+
+
