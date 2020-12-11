@@ -77,7 +77,7 @@ namespace Sidekick.Controllers
         }
 
         // GET: Create a Survey with the "Create" view
-        public ActionResult Create()
+        public IActionResult Create()
         {
             return View(new SurveyCreateViewModel());
         }
@@ -85,7 +85,7 @@ namespace Sidekick.Controllers
         // POST: Create a Survey with the "Create" view
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(SurveyCreateViewModel model)
+        public IActionResult Create(SurveyCreateViewModel model)
         {
             var userId = identityHelper.GetUserId(User);
 
@@ -138,7 +138,7 @@ namespace Sidekick.Controllers
         // POST: Edit a Survey with the "Edit" view
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(SurveyEditViewModel model)
+        public IActionResult Edit(SurveyEditViewModel model)
         {
             try
             {
@@ -164,6 +164,29 @@ namespace Sidekick.Controllers
                 TempData.SetErrorMessage($"Failed updating {model.Name}: " + ex.Message);
             }
 
+            return RedirectToAction("Index", "Dashboard");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id)
+        {
+            try
+            {
+                Survey survey = repository.DeleteSurvey(identityHelper.GetUserId(User), id);
+                if (null != survey)
+                {
+                    TempData.SetSuccessMessage($"Successfully deleted - {survey.Name}.");
+                }
+                else
+                {
+                    TempData.SetErrorMessage("Delete failed: survey not found!");
+                }
+            }
+            catch (Exception ex)
+            {
+                TempData.SetErrorMessage("Delete failed!");
+            }
             return RedirectToAction("Index", "Dashboard");
         }
     }

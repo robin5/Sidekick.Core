@@ -1,9 +1,9 @@
 ﻿@*
     **********************************************************************************
-    * Copyright (c) 2019 Robin Murray
+    * Copyright (c) 2020 Robin Murray
     **********************************************************************************
     *
-    * File: _Modal.cshtml
+    * File: _DeleteModal.cshtml
     *
     * Description: A Modal Dialog
     *
@@ -54,6 +54,9 @@
                 <strong>@message</strong>
             </div>
             <div class="modal-footer">
+                <form asp-controller=@controller asp-action=@action asp-route-id=@id method="post" class="form-launch">
+                    <input type="submit" value="@actionText" class="btn btn-success" />
+                </form>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
             </div>
         </div>
