@@ -57,13 +57,13 @@ namespace Sidekick.Controllers
 
         public IActionResult Index()
         {
-            var userId = identityHelper.GetUserId(User);
+            repository.UserId = identityHelper.GetUserId(User);
 
             var model = new DashboardViewModel
             {
-                Surveys = repository.GetAllSurveyNameIds(userId),
-                Teams = repository.GetTeams(userId),
-                LaunchedSurveys = repository.GetLaunchedSurveys(userId)
+                Surveys = repository.GetAllSurveyNameIds(),
+                Teams = repository.GetTeams(),
+                LaunchedSurveys = repository.GetLaunchedSurveys()
             };
             return View(model);
         }

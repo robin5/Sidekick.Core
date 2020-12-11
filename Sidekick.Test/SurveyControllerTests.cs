@@ -72,9 +72,8 @@ namespace Sidekick.Test
         {
             // Arrange
             var repository = new Sidekick.Models.MockRepository();
-            var survey = repository.AddSurvey(new Survey()
+            var survey = repository.User(UserId).AddSurvey(new Survey()
             {
-                UserId = UserId,
                 Name = "F2022 CTEC-235 SUMMER",
                 Questions = new List<string>() { "Q1", }
             });

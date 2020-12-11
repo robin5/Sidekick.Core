@@ -58,9 +58,7 @@ namespace Sidekick.Controllers
         // GET: Displays a survey with the "Index" view
         public IActionResult Index(int id)
         {
-            var userId = identityHelper.GetUserId(User);
-
-            var survey = repository.GetSurvey(userId, id);
+            var survey = repository.User(identityHelper.GetUserId(User)).GetSurvey(id);
             if (null == survey)
             {
                 return RedirectToAction("Index", "Dashboard");
@@ -118,9 +116,7 @@ namespace Sidekick.Controllers
         // GET: Displays a survey with the "Index" view
         public IActionResult Edit(int id)
         {
-            var userId = identityHelper.GetUserId(User);
-
-            var survey = repository.GetSurvey(userId, id);
+            var survey = repository.User(identityHelper.GetUserId(User)).GetSurvey(id);
             if (null == survey)
             {
                 return RedirectToAction("Index", "Dashboard");
@@ -173,7 +169,7 @@ namespace Sidekick.Controllers
         {
             try
             {
-                Survey survey = repository.DeleteSurvey(identityHelper.GetUserId(User), id);
+                Survey survey = repository.User(identityHelper.GetUserId(User)).DeleteSurvey(id);
                 if (null != survey)
                 {
                     TempData.SetSuccessMessage($"Successfully deleted - {survey.Name}.");

@@ -54,7 +54,6 @@ namespace Sidekick.Test
 
             var survey = new Survey()
             {
-                UserId = userId,
                 Id = 1,
                 Name = "S1",
                 Questions = new List<string>() { "Q1", "Q2", "Q3" }
@@ -62,12 +61,12 @@ namespace Sidekick.Test
 
             // Arrange
             var repository = new MockRepository();
-
+            repository.UserId = userId;
             repository.AddSurvey(survey);
 
-            var surveys = repository.GetAllSurveyNameIds(userId);
-            var teams = repository.GetTeams(userId);
-            var launchedSurveys = repository.GetLaunchedSurveys(userId);
+            var surveys = repository.GetAllSurveyNameIds();
+            var teams = repository.GetTeams();
+            var launchedSurveys = repository.GetLaunchedSurveys();
 
             var dashboardController = new DashboardController(null, repository, IdentityHelper);
 

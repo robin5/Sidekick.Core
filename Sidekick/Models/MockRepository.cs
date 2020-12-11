@@ -45,37 +45,41 @@ namespace Sidekick.Models
         List<TeamNameId> teams = null;
         List<LaunchedSurvey> launchedSurveys = null;
 
-        public virtual void AddSurvey2(Survey survey)
-        {
+        public string UserId { get; set; }
 
+        public IRepository User(string userId)
+        {
+            UserId = userId;
+            return this;
         }
 
         #region Survey
         public virtual Survey AddSurvey(Survey survey) 
         {
+            survey.UserId = UserId;
             survey.Id = NextSurveyId;
             surveys.Add(survey);
             return survey;
         }
-        public Survey DeleteSurvey(string AspNetId, int id)
+        public Survey DeleteSurvey(int id)
         {
-            Survey survey = surveys.FirstOrDefault(e => ((e.Id == id) && (e.UserId == AspNetId)));
+            Survey survey = surveys.FirstOrDefault(e => ((e.Id == id) && (e.UserId == UserId)));
             if (null != survey)
             {
                 surveys.Remove(survey);
             }
             return survey;
         }
-        public Survey GetSurvey(string AspNetId, int id)
+        public Survey GetSurvey(int id)
         {
-            return surveys.FirstOrDefault(e => ((e.Id == id) && (e.UserId == AspNetId)));
+            return surveys.FirstOrDefault(e => ((e.Id == id) && (e.UserId == UserId)));
         }
         public Survey UpdateSurvey(Survey updatedSurvey)
         {
-            Survey survey = surveys.FirstOrDefault(e => ((e.Id == updatedSurvey.Id) && (e.UserId == updatedSurvey.UserId)));
+            Survey survey = surveys.FirstOrDefault(e => ((e.Id == updatedSurvey.Id) && (e.UserId == UserId)));
             if (null != survey)
             {
-                survey.UserId = updatedSurvey.UserId;
+                survey.UserId = UserId;
                 survey.Id = updatedSurvey.Id;
                 survey.Name = updatedSurvey.Name;
                 survey.Questions = updatedSurvey.Questions;
@@ -84,11 +88,11 @@ namespace Sidekick.Models
         }
         #endregion
 
-        public IEnumerable<SurveyNameId> GetAllSurveyNameIds(string AspNetId)
+        public IEnumerable<SurveyNameId> GetAllSurveyNameIds()
         {
             var surveyNameIds = new List<SurveyNameId>();
 
-            var result = surveys.FindAll(e => e.UserId == AspNetId);
+            var result = surveys.FindAll(e => e.UserId == UserId);
 
             foreach (var surveyNameId in result)
             {
@@ -101,7 +105,7 @@ namespace Sidekick.Models
             return surveyNameIds;
         }
 
-        public IEnumerable<TeamNameId> GetTeams(string userId)
+        public IEnumerable<TeamNameId> GetTeams()
         {
             teams = new List<TeamNameId>()
             {
@@ -125,7 +129,7 @@ namespace Sidekick.Models
             };
             return teams;
         }
-        public IEnumerable<LaunchedSurvey> GetLaunchedSurveys(string userId)
+        public IEnumerable<LaunchedSurvey> GetLaunchedSurveys()
         {
             launchedSurveys = new List<LaunchedSurvey>()
             {
