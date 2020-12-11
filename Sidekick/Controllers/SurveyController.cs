@@ -84,6 +84,7 @@ namespace Sidekick.Controllers
 
         // POST: Create a Survey with the "Create" view
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Create(SurveyCreateViewModel model)
         {
             var userId = identityHelper.GetUserId(User);
@@ -109,6 +110,58 @@ namespace Sidekick.Controllers
             catch (Exception ex)
             {
                 TempData.SetErrorMessage($"Failed adding {model.Name} to peer surveys: " + ex.Message);
+            }
+
+            return RedirectToAction("Index", "Dashboard");
+        }
+
+        // GET: Displays a survey with the "Index" view
+        public IActionResult Edit(int id)
+        {
+            var userId = identityHelper.GetUserId(User);
+
+            var survey = repository.GetSurvey(userId, id);
+            if (null == survey)
+            {
+                return RedirectToAction("Index", "Dashboard");
+            }
+
+            var viewModel = new SurveyEditViewModel()
+            {
+                Id = survey.Id,
+                Name = survey.Name,
+                Questions = survey.Questions
+            };
+
+            return View(viewModel);
+        }
+        // POST: Edit a Survey with the "Edit" view
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(SurveyEditViewModel model)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                Survey survey = new Survey()
+                {
+                    UserId = identityHelper.GetUserId(User),
+                    Id = model.Id,
+                    Name = model.Name,
+                    Questions = model.Questions
+                };
+
+                repository.UpdateSurvey(survey);
+
+                TempData.SetSuccessMessage($"Successfully updated {model.Name}.");
+            }
+            catch (Exception ex)
+            {
+                TempData.SetErrorMessage($"Failed updating {model.Name}: " + ex.Message);
             }
 
             return RedirectToAction("Index", "Dashboard");

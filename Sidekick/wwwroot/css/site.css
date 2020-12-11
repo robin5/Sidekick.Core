@@ -252,3 +252,8 @@ li.vs-question:not(:last-child) {
     flex-grow: 0;
 }
 
+.line-validation-message {
+    display: block;
+    margin-bottom: 5px;
+    padding-left: .5rem;
+}

@@ -3,9 +3,9 @@
     * Copyright (c) 2020 Robin Murray
     **********************************************************************************
     *
-    * File: Index.cshtml
+    * File: Edit.cshtml
     *
-    * Description: Create view for SurveyController
+    * Description: edit view for Survey controller
     *
     * Author: Robin Murray
     *
@@ -32,38 +32,37 @@
     **********************************************************************************
 *@
 
-@model Sidekick.ViewModels.SurveyCreateViewModel
+@model Sidekick.ViewModels.SurveyEditViewModel
 
 @{
-    ViewBag.Title = "Create Survey";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    var surveyName = @Model.Name;
+    ViewData["Title"] = surveyName;
 }
 
-<div class="container sc-container">
+<div class="container-md dsh-container">
     <div class="dsh-title">
-        <h2>Create a Survey</h2>
+        <h2>Edit: @(Model.Name ?? "Undefined")</h2>
     </div>
     <div class="dsh-content">
-        <div class="dsh-content-image">
-            <img src="\images\bethany-cirlincione-743f0Dy8bFE-unsplash.jpg" width="100%" />
-        </div>
-
-        @* -- Validation Summary -- *@
-
-        @if (!ViewData.ModelState.IsValid)
-        {
-            <div asp-validation-summary="All" class="alert alert-danger"></div>
-        }
         <div id="vs-survey-questions" class="vs-survey-questions">
 
-            @using (Html.BeginForm("Create", "Survey", FormMethod.Post, new { @class = "form-launch" }))
+            @if (!ViewData.ModelState.IsValid)
             {
+                <div asp-validation-summary="All" class="alert alert-danger"></div>
+            }
+
+            <form asp-controller="Survey" asp-action="Edit" method="post" class="form-launch">
+
+                @* -- Survey Id -- *@
+
+                <input asp-for="Id" type="hidden" />
+
                 @* -- Survey Name -- *@
 
                 <label asp-for="Name" class="control-label">Survey Name</label><span>&nbsp;&nbsp;</span>
                 <span asp-validation-for="Name" class="alert-danger"></span>
                 <input asp-for="Name"
-                       title="Enter a descriptive name for this survey"
+                       title="Enter a descriptive name for the this peer evaluation cycle"
                        class="form-control"
                        autofocus=""
                        required />
@@ -78,17 +77,16 @@
                     @if (Model != null && Model.Questions != null)
                     {
                         int rowId = 0;
-                        foreach (string question in Model.Questions)
+                        foreach (var question in Model.Questions)
                         {
                             <div id="row-id-@(rowId)" class="question-row survey-question-container">
                                 <div class="survey-question-box">
                                     <textarea id="question-@(rowId)" class="q-textarea form-control" name="Questions[@(rowId)]" required>@(question)</textarea>
                                 </div>
                                 <div class="survey-delete-box">
-                                    <a class="delete-anchor" href="#" data-row-id="@(rowId)" onclick="deleteRow(event)">delete</a>
+                                    <a href="#" data-row-id="@(rowId)" onclick="deleteRow(event)">delete</a>
                                 </div>
                             </div>
-
                             rowId++;
                         }
                     }
@@ -104,8 +102,14 @@
 
                 @* -- Submit and Cancel buttons -- *@
 
-                @await Html.PartialAsync("~/Views/Shared/_SubmitAndCancel.cshtml", new ViewDataDictionary(ViewData) { { "Submit", "Create Survey" } })
-            }
+                @await Html.PartialAsync("~/Views/Shared/_SubmitAndCancel.cshtml",
+                    new ViewDataDictionary(ViewData) {
+                        { "Submit", "Update Survey" },
+                        { "cancel-controller", "Survey" },
+                        { "cancel-action", "Index" },
+                        { "cancel-action-id", Model.Id },
+                    })
+            </form>
         </div><!-- vs-survey-questions -->
     </div><!-- dsh-content -->
 </div><!-- container -->

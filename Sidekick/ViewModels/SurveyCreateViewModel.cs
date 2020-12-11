@@ -31,19 +31,17 @@
 // **********************************************************************************
 
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 using Sidekick.Validations;
 
 namespace Sidekick.ViewModels
 {
     public class SurveyCreateViewModel
     {
-        [NonNullEmptyOrWhiteSpace(ErrorMessage: "A Survey's name cannot be blank.")]
+        [NonNullEmptyOrWhiteSpace(ErrorMessage: "A survey's name cannot be blank.")]
         public string Name { get; set; }
         
-        [Required(ErrorMessage = "Questions missing.")]
-        [MinCount(1, "Peer Evaluations must have at least one question")]
-        [NonNullEmptyOrWhiteSpace(ErrorMessage: "A Survey question cannot be blank.")]
-        public List<string> Questions { get; set; }
+        [MinCount(1, "A survey must define one or more questions.")]
+        [NonNullEmptyOrWhiteSpace(ErrorMessage: "A survey question cannot be blank.")]
+        public IEnumerable<string> Questions { get; set; }
     }
 }

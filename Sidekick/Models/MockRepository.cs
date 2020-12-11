@@ -70,12 +70,12 @@ namespace Sidekick.Models
         {
             return surveys.FirstOrDefault(e => ((e.Id == id) && (e.UserId == AspNetId)));
         }
-        public Survey UpdateSurvey(string AspNetId, Survey updatedSurvey)
+        public Survey UpdateSurvey(Survey updatedSurvey)
         {
-            Survey survey = surveys.FirstOrDefault(e => ((e.Id == updatedSurvey.Id) && (e.UserId == AspNetId)));
+            Survey survey = surveys.FirstOrDefault(e => ((e.Id == updatedSurvey.Id) && (e.UserId == updatedSurvey.UserId)));
             if (null != survey)
             {
-                survey.UserId = AspNetId;
+                survey.UserId = updatedSurvey.UserId;
                 survey.Id = updatedSurvey.Id;
                 survey.Name = updatedSurvey.Name;
                 survey.Questions = updatedSurvey.Questions;

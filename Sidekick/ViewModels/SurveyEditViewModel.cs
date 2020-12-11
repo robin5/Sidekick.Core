@@ -2,7 +2,9 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: IRepository.cs
+// * File: SurveyEditViewModel.cs
+// *
+// * Description: View model for the SurveyController for editing a survey
 // *
 // * Author: Robin Murray
 // *
@@ -28,21 +30,10 @@
 // * 
 // **********************************************************************************
 
-using System.Collections.Generic;
-
-namespace Sidekick.Models
+namespace Sidekick.ViewModels
 {
-    public interface IRepository
+    public class SurveyEditViewModel : SurveyCreateViewModel
     {
-        #region Surveys
-        Survey AddSurvey(Survey survey);
-        Survey GetSurvey(string AspNetId, int id);
-        Survey UpdateSurvey(Survey survey);
-        Survey DeleteSurvey(string AspNetId, int id);
-        #endregion
-
-        IEnumerable<SurveyNameId> GetAllSurveyNameIds(string userId);
-        IEnumerable<TeamNameId> GetTeams(string userId);
-        IEnumerable<LaunchedSurvey> GetLaunchedSurveys(string userId);
+        public int Id { get; set; }
     }
 }
