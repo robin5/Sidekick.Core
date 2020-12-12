@@ -1,4 +1,6 @@
-﻿using Moq;
+﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Moq;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +16,7 @@ namespace Sidekick.Test
         public IdentityHelper IdentityHelper { get; }
         public ControllerTest()
         {
+            // Create mocked IdentityHelper
             var identityHelper = new Mock<IdentityHelper>();
 
             identityHelper
