@@ -220,7 +220,8 @@ li.vs-question:not(:last-child) {
 
 .sc-container {
     margin-top: 40px;
-    max-width: 537px;
+    margin-bottom: 100px;
+    max-width: 700px;
 }
 .vs-survey-questions {
     font-size: 1.2em;
@@ -256,4 +257,50 @@ li.vs-question:not(:last-child) {
     display: block;
     margin-bottom: 5px;
     padding-left: .5rem;
+}
+
+/* TeamController Index view
+-------------------------------------------------- */
+
+.table-header {
+    padding: 10px 20px 10px 0;
+    min-width: 130px;
+}
+
+.table-header-badge {
+    padding: 0 20px 10px 0;
+}
+
+.table-data {
+    padding: 10px 20px 10px 0;
+}
+
+.table-data-badge {
+    padding-left: 10px;
+    vertical-align: top;
+}
+
+/* TeamController Create view
+-------------------------------------------------- */
+
+.create-team-image {
+    width: 100%;
+    height: auto;
+}
+
+.team-add-students {
+    margin-bottom: 10px;
+}
+
+.tbl-team-create-edit {
+    margin-bottom: 20px;
+}
+
+.thead-team-create-edit {
+    letter-spacing: 2px;
+}
+
+.badge-letter-spacing {
+    letter-spacing: .5px;
+    font-weight: normal;
 }

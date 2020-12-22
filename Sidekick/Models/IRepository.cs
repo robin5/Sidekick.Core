@@ -44,8 +44,17 @@ namespace Sidekick.Models
         Survey DeleteSurvey(int id);
         #endregion
 
+        #region Teams
+        Team AddTeam(Team team);
+        Team GetTeam(int id);
+        IEnumerable<TeamStudent> GetTeamStudents(int teamId);
+        Team UpdateTeam(Team team);
+        Team DeleteTeam(int id);
+        #endregion
+
         IEnumerable<SurveyNameId> GetAllSurveyNameIds();
-        IEnumerable<TeamNameId> GetTeams();
-        IEnumerable<LaunchedSurvey> GetLaunchedSurveys();
+        IEnumerable<TeamNameId> GetAllTeamNameIds();
+        IEnumerable<LaunchedSurvey> GetAllLaunchedSurveys();
+        IEnumerable<Student> GetAllStudents();
     }
 }

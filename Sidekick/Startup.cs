@@ -79,6 +79,7 @@ namespace Sidekick
 
             services.AddAuthorization(options =>
             {
+                options.AddPolicy("TeamOwner", policy => policy.RequireClaim("IsFaculty"));
                 options.AddPolicy("SurveyOwner", policy => policy.RequireClaim("IsFaculty"));
                 options.AddPolicy("PeerReviewer", policy => policy.RequireClaim("IsPeer"));
             });

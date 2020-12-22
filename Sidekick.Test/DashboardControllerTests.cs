@@ -65,8 +65,8 @@ namespace Sidekick.Test
             repository.AddSurvey(survey);
 
             var surveys = repository.GetAllSurveyNameIds();
-            var teams = repository.GetTeams();
-            var launchedSurveys = repository.GetLaunchedSurveys();
+            var teams = repository.GetAllTeamNameIds();
+            var launchedSurveys = repository.GetAllLaunchedSurveys();
 
             var dashboardController = new DashboardController(null, repository, IdentityHelper);
 

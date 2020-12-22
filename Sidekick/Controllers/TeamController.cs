@@ -2,7 +2,7 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: SurveyController.cs
+// * File: TeamController.cs
 // *
 // * Author: Robin Murray
 // *
@@ -34,18 +34,20 @@ using Microsoft.Extensions.Logging;
 using Sidekick.ViewModels;
 using Sidekick.Models;
 using System;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sidekick.Controllers
 {
-    [Authorize(Policy = "SurveyOwner")]
-    public class SurveyController : Controller
+    [Authorize(Policy = "TeamOwner")]
+    public class TeamController : Controller
     {
         private readonly ILogger<DashboardController> logger;
         private readonly IRepository repository;
         private readonly IIdentityHelper identityHelper;
 
-        public SurveyController(
+        public TeamController(
             ILogger<DashboardController> logger,
             IRepository repository,
             IIdentityHelper identityHelper)
@@ -55,103 +57,110 @@ namespace Sidekick.Controllers
             this.identityHelper = identityHelper;
         }
 
-        // Displays survey details
+        // Displays team details
         [HttpGet]
         public IActionResult Index(int id)
         {
-            var survey = repository.User(identityHelper.GetUserId(User)).GetSurvey(id);
-            if (null == survey)
+            var teamStudents = repository.User(identityHelper.GetUserId(User)).GetTeamStudents(id);
+            if (teamStudents.Count() == 0)
             {
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            var viewModel = new SurveyIndexViewModel()
+            var viewModel = new TeamIndexViewModel()
             {
-                Id = survey.Id,
-                Name = survey.Name,
-                Questions = survey.Questions
+                TeamStudents = teamStudents
             };
 
             return View(viewModel);
         }
 
-        // Displays the view for creating a survey
+        // Displays the view for creating a team
         [HttpGet]
         public IActionResult Create()
         {
-            return View(new SurveyCreateViewModel());
+            var students = repository.User(identityHelper.GetUserId(User)).GetAllStudents();
+
+            var viewModel = new TeamCreateViewModel()
+            {
+                Students = students
+            };
+            return View(viewModel);
         }
 
-        // Creates a survey
+        // Creates a team
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(SurveyCreateViewModel model)
+        public IActionResult Create(TeamCreateViewModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
+                    model.Students = repository.User(identityHelper.GetUserId(User)).GetAllStudents();
                     return View(model);
                 }
 
-                var survey = new Survey()
+                var team = new Team()
                 {
                     Name = model.Name,
-                    Questions = model.Questions
+                    MemberIds = model.PeerSelection
                 };
 
-                repository.User(identityHelper.GetUserId(User)).AddSurvey(survey);
+                repository.User(identityHelper.GetUserId(User)).AddTeam(team);
 
-                TempData.SetSuccessMessage($"Successfully added {model.Name} to peer surveys.");
+                TempData.SetSuccessMessage($"Successfully added {model.Name} to peer groups.");
             }
             catch (Exception ex)
             {
-                TempData.SetErrorMessage($"Failed adding {model.Name} to peer surveys: " + ex.Message);
+                TempData.SetErrorMessage($"Failed adding {model.Name} to peer groups: " + ex.Message);
             }
 
             return RedirectToAction("Index", "Dashboard");
         }
 
-        // Displays the view for editing a survey
+        // Displays the view for editing a team
         [HttpGet]
         public IActionResult Edit(int id)
         {
-            var survey = repository.User(identityHelper.GetUserId(User)).GetSurvey(id);
-            if (null == survey)
+            var students = repository.User(identityHelper.GetUserId(User)).GetAllStudents();
+            
+            var team = repository.User(identityHelper.GetUserId(User)).GetTeam(id);
+            if (null == team)
             {
                 return RedirectToAction("Index", "Dashboard");
             }
 
-            var viewModel = new SurveyEditViewModel()
+            var viewModel = new TeamEditViewModel()
             {
-                Id = survey.Id,
-                Name = survey.Name,
-                Questions = survey.Questions
+                Id = id,
+                Students = students,
+                Name = team.Name,
+                PeerSelection = team.MemberIds,
             };
-
             return View(viewModel);
         }
 
-        // Updates a survey
+        // Updates a team
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult Edit(SurveyEditViewModel model)
+        public IActionResult Edit(TeamEditViewModel model)
         {
             try
             {
                 if (!ModelState.IsValid)
                 {
+                    model.Students = repository.User(identityHelper.GetUserId(User)).GetAllStudents();
                     return View(model);
                 }
 
-                Survey survey = new Survey()
+                Team team = new Team()
                 {
                     Id = model.Id,
                     Name = model.Name,
-                    Questions = model.Questions
+                    MemberIds = model.PeerSelection
                 };
 
-                repository.User(identityHelper.GetUserId(User)).UpdateSurvey(survey);
+                repository.User(identityHelper.GetUserId(User)).UpdateTeam(team);
 
                 TempData.SetSuccessMessage($"Successfully updated {model.Name}.");
             }
@@ -163,21 +172,21 @@ namespace Sidekick.Controllers
             return RedirectToAction("Index", "Dashboard");
         }
 
-        // Deletes a survey
+        // Deletes a team
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Delete(int id)
         {
             try
             {
-                Survey survey = repository.User(identityHelper.GetUserId(User)).DeleteSurvey(id);
-                if (null != survey)
+                Team team = repository.User(identityHelper.GetUserId(User)).DeleteTeam(id);
+                if (null != team)
                 {
-                    TempData.SetSuccessMessage($"Successfully deleted - {survey.Name}.");
+                    TempData.SetSuccessMessage($"Successfully deleted - {team.Name}.");
                 }
                 else
                 {
-                    TempData.SetErrorMessage("Delete failed: survey not found!");
+                    TempData.SetErrorMessage("Delete failed: peer group not found!");
                 }
             }
             catch (Exception ex)

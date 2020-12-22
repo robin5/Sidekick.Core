@@ -2,7 +2,9 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: DashboardController.cs
+// * File: TeamCreateViewModel.cs
+// *
+// * Description: View model for the TeamController for creating a team
 // *
 // * Author: Robin Murray
 // *
@@ -28,44 +30,21 @@
 // * 
 // **********************************************************************************
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Sidekick.Models;
-using System.Linq;
-using System.Security.Claims;
+using Sidekick.Validations;
 
-namespace Sidekick.Controllers
+namespace Sidekick.ViewModels
 {
-    [Authorize(Policy = "SurveyOwner")]
-    public class DashboardController : Controller
+    public class TeamCreateViewModel
     {
-        private readonly ILogger<DashboardController> logger;
-        private readonly IRepository repository;
-        private readonly IIdentityHelper identityHelper;
+        [NonNullEmptyOrWhiteSpace(ErrorMessage: "A peer group's name cannot be blank.")]
+        public string Name { get; set; }
 
-        public DashboardController(
-            ILogger<DashboardController> logger,
-            IRepository repository,
-            IIdentityHelper identityHelper)
-        {
-            this.logger = logger;
-            this.repository = repository;
-            this.identityHelper = identityHelper;
-        }
+        [MinCount(1, "A peer group must have one or more members.")]
+        public IEnumerable<string> PeerSelection { get; set; }
 
-        public IActionResult Index()
-        {
-            repository.UserId = identityHelper.GetUserId(User);
-
-            var model = new DashboardViewModel
-            {
-                Surveys = repository.GetAllSurveyNameIds(),
-                Teams = repository.GetAllTeamNameIds(),
-                LaunchedSurveys = repository.GetAllLaunchedSurveys()
-            };
-            return View(model);
-        }
+        public IEnumerable<Student> Students { get; set; }
     }
 }

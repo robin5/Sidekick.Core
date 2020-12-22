@@ -12,6 +12,10 @@ namespace Sidekick.Test
 {
     public class ControllerTest
     {
+        public static string NewRandomString()
+        {
+            return Guid.NewGuid().ToString();
+        }
         public string UserId { get; }  = "TestUser";
         public IdentityHelper IdentityHelper { get; }
         public ControllerTest()

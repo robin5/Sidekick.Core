@@ -1,0 +1,212 @@
+﻿@*
+    **********************************************************************************
+    * Copyright (c) 2019 Robin Murray
+    **********************************************************************************
+    *
+    * File: Create.cshtml
+    *
+    * Description: Create view for TeamController
+    *
+    * Author: Robin Murray
+    *
+    **********************************************************************************
+    *
+    * Granting License: The MIT License (MIT)
+    *
+    *   Permission is hereby granted, free of charge, to any person obtaining a copy
+    *   of this software and associated documentation files (the "Software"), to deal
+    *   in the Software without restriction, including without limitation the rights
+    *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    *   copies of the Software, and to permit persons to whom the Software is
+    *   furnished to do so, subject to the following conditions:
+    *   The above copyright notice and this permission notice shall be included in
+    *   all copies or substantial portions of the Software.
+    *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    *   THE SOFTWARE.
+    *
+    **********************************************************************************
+*@
+
+@model Sidekick.ViewModels.TeamCreateViewModel
+
+@{
+    ViewBag.Title = "Create Team";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container sc-container">
+    <div class="dsh-title">
+        <h2>Create a Peer Group</h2>
+    </div>
+
+    <div class="dsh-content">
+        <div class="dsh-content-image">
+            <img src="\images\windows-WJPHTJEtgzw-unsplash.jpg" alt="group of peers" class="create-team-image" />
+        </div>
+
+        @* -- Validation Summary -- *@
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">@Html.ValidationSummary()</div>
+        }
+
+        <form asp-controller="Team" asp-action="Create" method="post" class="form-launch">
+
+            @* -- Team Name -- *@
+
+            <label asp-for="Name" class="control-label">Peer Group Name</label><span>&nbsp;&nbsp;</span>
+            <span asp-validation-for="Name" class="alert-danger"></span>
+            <input asp-for="Name"
+                   title="Enter a name for the peer group"
+                   class="form-control"
+                   autofocus=""
+                   style="margin-bottom: 10px"
+                   required />
+
+            @* -- Student DropDown -- *@
+
+            <label for="Student" class="control-label">Student</label><br />
+            <div class="d-flex team-add-students">
+                <select id="Student" class="form-control flex-grow-1">
+                    <option>-- select a student --</option>
+                    @foreach (var student in Model.Students)
+                    {
+                        <option value="@student.UserId">@student.Name (@student.UserName)</option>
+                    }
+                </select>
+
+                @* -- Add User Button -- *@
+
+                <button type="button"
+                        id="btn-add-team"
+                        class="btn btn-primary"
+                        name="action"
+                        value="add-user"
+                        onclick="ShowRow();"
+                        style="margin-left: 5px; display: inline;">
+                    Add
+                </button>
+            </div>
+
+            @* -- Hidden peer group listbox -- *@
+
+            @if (Model.PeerSelection == null)
+            {
+                Model.PeerSelection = new List<string>();
+            }
+            <select id="PeerSelection" name="PeerSelection" class="form-control" style="display: none" multiple>
+                @foreach (var student in Model.Students)
+                {
+                    if (Model.PeerSelection.Contains(student.UserId))
+                    {
+                        <option value="@student.UserId" selected></option>
+                    }
+                    else
+                    {
+                        <option value="@student.UserId"></option>
+                    }
+                }
+            </select>
+
+            @* -- Peer group table -- *@
+
+            <label class="control-label">Peer Group Members</label><span>&nbsp;&nbsp;</span>
+            <span asp-validation-for="PeerSelection" class="alert-danger"></span>
+
+            <div class="table-responsive-md">
+                <table id="tbl-create-team" class="table table-bordered table-hover tbl-team-create-edit">
+                    <thead class="thead-dark thead-team-create-edit">
+                        <tr>
+                            <th class="table-header">Name</th>
+                            <th class="table-header">User Name</th>
+                            <th class="table-header">Email</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var member in Model.Students)
+                        {
+                            <tr id="tr-@(member.UserId)" style="display: none" class="table-warning">
+                                <td id="td-@(member.UserId)">@member.Name</td>
+                                <td>@member.UserName</td>
+                                <td>@member.Email</td>
+                                <td>
+                                    <a data-row-id="@(member.UserId)" href="#0" onclick="deleteRow(event)" class="badge badge-primary badge-letter-spacing">delete</a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            @* -- Submit and Cancel buttons -- *@
+
+            @await Html.PartialAsync("~/Views/Shared/_SubmitAndCancel.cshtml", new ViewDataDictionary(ViewData) { { "Submit", "Create Peer Group" } })
+        </form>
+    </div>
+
+</div>
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            //
+            UpdateTableFromListbox();
+        });
+
+        // Transfers model data from hidden listbox into
+        // table containing peers who have been selected
+        function UpdateTableFromListbox() {
+            // Cycle through selected listbox items
+            $("#PeerSelection option:selected").each(function () {
+                // Use the peers user ID to denote a row in the table
+                var userId = $(this).val();
+                $(`#tr-${userId}`).css("display", "table-row");
+            });
+        }
+
+        // Shows the row corresponding to a selected peers user ID
+        function ShowRow() {
+
+            var userId = $("#Student").val();
+
+            if ("" != userId) {
+
+                var tableRow = $(`#tr-${userId}`);
+
+                if (tableRow.css("display") == "table-row") {
+                    var name = $(`#td-${userId}`).text();
+                    alert(name + " is already a member of the team!");
+                    return;
+                }
+
+                tableRow.css("display", "table-row");
+
+                console.log(`#PeerSelection option[value='${userId}']`);
+
+                // Select the list item in the hidden listbox specified by User ID
+                $(`#PeerSelection option[value='${userId}']`).prop("selected", true);
+            }
+        }
+
+        // Deletes a row from the table and prevents the anchor from firing.
+        function deleteRow(event) {
+
+            var userId = event.target.getAttribute('data-row-id');
+            var rowToDelete = `#tr-${userId}`;
+            $(rowToDelete).css("display", "none");
+            event.preventDefault();
+
+            // Deselect the list item in the hidden listbox specified by User ID
+            $(`#PeerSelection option[value='${userId}']`).prop("selected", false);
+        }
+    </script>
+}

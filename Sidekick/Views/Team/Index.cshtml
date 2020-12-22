@@ -1,0 +1,98 @@
+﻿@*
+    **********************************************************************************
+    * Copyright (c) 2019 Robin Murray
+    **********************************************************************************
+    *
+    * File: Index.cshtml
+    *
+    * Description: Index view for ViewTeamController
+    *
+    * Author: Robin Murray
+    *
+    **********************************************************************************
+    *
+    * Granting License: The MIT License (MIT)
+    *
+    *   Permission is hereby granted, free of charge, to any person obtaining a copy
+    *   of this software and associated documentation files (the "Software"), to deal
+    *   in the Software without restriction, including without limitation the rights
+    *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    *   copies of the Software, and to permit persons to whom the Software is
+    *   furnished to do so, subject to the following conditions:
+    *   The above copyright notice and this permission notice shall be included in
+    *   all copies or substantial portions of the Software.
+    *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    *   THE SOFTWARE.
+    *
+    **********************************************************************************
+*@
+
+@model Sidekick.ViewModels.TeamIndexViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var teamName = Model.TeamStudents.First().Team.Name;
+    var teamId = Model.TeamStudents.First().Team.Id;
+    ViewData["Title"] = "Sidekick Team: " + teamName;
+}
+
+<div class="container dsh-container">
+    <div class="dsh-title">
+        <h2>@teamName</h2>
+    </div>
+    <div class="dsh-content">
+        <ul class="dsh-process">
+            <li><a asp-area="" asp-controller="Team" asp-action="Edit" asp-route-id="@teamId">Edit team</a></li>
+            <li><a href="#staticBackdrop" data-toggle="modal" data-target="#staticBackdrop">Delete team</a></li>
+            <li><a asp-area="" asp-controller="Dashboard" asp-action="Index">Back to dashboard</a></li>
+        </ul>
+        <hr>
+        <div id="vs-survey-questions" class="vs-survey-questions">
+            @* Generate survey instance cards *@
+
+            @if (Model.TeamStudents.Count() > 0)
+            {
+                <div class="table-responsive-md">
+
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th scope="col">Name</th>
+                                <th scope="col">User Name</th>
+                                <th scope="col">Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var teamStudent in Model.TeamStudents)
+                            {
+                                <tr>
+                                    <td>@teamStudent.Student.Name</td>
+                                    <td><em>@teamStudent.Student.UserName</em></td>
+                                    <td><a href="mailto:(@teamStudent.Student.Email)">@teamStudent.Student.Email</a></td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div style="margin-left: 20px"><p>None defined.</p></div>
+            }
+        </div>
+
+        @await Html.PartialAsync("~/Views/Shared/_DeleteModal.cshtml",
+            new ViewDataDictionary(ViewData) {
+                { "delete-title", "Delete " + teamName},
+                { "message", "Are you sure?" },
+                { "action-text", "Delete" },
+                { "action-controller", "Team"},
+                { "action-action", "Delete"},
+                { "action-id", teamId} })
+    </div>
+</div>
