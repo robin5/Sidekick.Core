@@ -2,7 +2,9 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: DashboardController.cs
+// * File: DateTimeAttribute.cs
+// *
+// * Description: Attribute for validating DateTime parameters
 // *
 // * Author: Robin Murray
 // *
@@ -28,44 +30,39 @@
 // * 
 // **********************************************************************************
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Sidekick.Models;
-using System.Linq;
-using System.Security.Claims;
+using System;
+using System.ComponentModel.DataAnnotations;
 
-namespace Sidekick.Controllers
+namespace Sidekick.Validations
 {
-    [Authorize(Policy = "SurveyOwner")]
-    public class DashboardController : Controller
+    public class NoneSelectedAttribute : ValidationAttribute
     {
-        private readonly ILogger<DashboardController> logger;
-        private readonly IRepository repository;
-        private readonly IIdentityHelper identityHelper;
-
-        public DashboardController(
-            ILogger<DashboardController> logger,
-            IRepository repository,
-            IIdentityHelper identityHelper)
+        private string _errorMessage = null;
+        public NoneSelectedAttribute(string errorMessage = null)
         {
-            this.logger = logger;
-            this.repository = repository;
-            this.identityHelper = identityHelper;
+            _errorMessage = errorMessage ?? base.ErrorMessage;
+        }
+        public override bool IsValid(object value)
+        {
+            int? iVal;
+            string sVal;
+
+            if ((null != (iVal = value as int?)) && (iVal < 0))
+            {
+                return false;
+            }
+
+            if (null != (sVal = value as string) && (sVal == ""))
+            {
+                return false;
+            }
+
+            return true;
         }
 
-        public IActionResult Index()
+        public override string FormatErrorMessage(string name)
         {
-            repository.UserId = identityHelper.GetUserId(User);
-
-            var model = new DashboardViewModel
-            {
-                Surveys = repository.GetAllSurveyNameIds(),
-                Teams = repository.GetAllTeamNameIds(),
-                Launches = repository.GetAllLaunches()
-            };
-            return View(model);
+            return _errorMessage ?? $"{name} is invalid";
         }
     }
 }

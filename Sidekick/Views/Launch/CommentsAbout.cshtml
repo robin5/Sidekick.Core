@@ -1,0 +1,55 @@
+﻿@model Sidekick.ViewModels.CommentsAboutViewModel
+
+@{
+    ViewData["Title"] = "Comments About " + Model.Student;
+}
+
+<div class="container dsh-container">
+    <div class="dsh-title">
+        <h2>@Model.Launch.Name: Comments about @Model.Student.Name from @Model.Team.Name</h2>
+    </div>
+    <div class="dsh-content container-fluid">
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#summary-tone" aria-expanded="false" aria-controls="view summary tone">
+            Summary Tone
+        </button>
+        <div id="summary-tone" class="collapse"><p style="padding-top: 30px;">Summary tone information goes here</p></div>
+
+        @{
+            var toneIndex = 0;
+            var qIndex = 1;
+            var questionId = 0;
+            var tmpStudentId = 0;
+        }
+
+        @foreach (var question in Model.Survey.Questions)
+        {
+            <div class="cb-question-group">
+
+                <button class="cb-question" type="button" data-toggle="collapse" data-target="#templates@(qIndex)" aria-expanded="false" aria-controls="collapseExample">
+                    <p>@(qIndex). question</p>
+                </button>
+
+                <div id="templates@(qIndex)" class="collapse">
+                    <div class="cb-answer-group">
+                        @foreach (var studentId in Model.Team.MemberIds)
+                        {
+                            var answer = Model.Answers[questionId, tmpStudentId];//.text;
+                            var grade = Model.Answers[questionId, tmpStudentId];//.grade;
+
+
+                            <p class="cb-student-and-grade">@Model.Students[studentId] - Grade: @grade</p>
+                            <div>
+                                <p class="cb-peer-answer">@answer</p>
+                            </div>
+
+                            @await Html.PartialAsync("~/Views/Shared/_ToneAnalysis.cshtml", null, new ViewDataDictionary(ViewData) { { "ToneIndex", toneIndex.ToString() } });
+
+                            toneIndex++;
+                        }
+                    </div>
+                </div>
+            </div>
+            qIndex++;
+        }
+    </div>
+</div>

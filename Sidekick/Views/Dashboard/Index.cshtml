@@ -64,7 +64,7 @@
         <ol class="dsh-process">
             <li><a asp-area="" asp-controller="Survey" asp-action="Create">Create a survey</a></li>
             <li><a asp-area="" asp-controller="Team" asp-action="Create">Create a peer group</a></li>
-            <li><a asp-area="" asp-controller="LaunchedSurvey" asp-action="Create">Send a survey to one or more peer groups</a></li>
+            <li><a asp-area="" asp-controller="Launch" asp-action="Create">Send a survey to one or more peer groups</a></li>
         </ol><!-- dashboard navigation -->
         <hr>
         <div>
@@ -139,21 +139,20 @@
 
                 @* Generate launched survey cards *@
 
-                @if (Model.LaunchedSurveys.Count() > 0)
+                @if (Model.Launches.Count() > 0)
                 {
-                    foreach (var surveyInstance in Model.LaunchedSurveys)
+                    foreach (var surveyInstance in Model.Launches)
                     {
                         <div class="card dsh-card-launched">
                             <div class="card-body">
                                 <ul class="list-group list-group-flush">
                                     <li class="list-group-item">
                                         <h5 class="card-title">
-                                            <a asp-area="" asp-controller="LaunchedSurvey" asp-action="Index" asp-route-id="@surveyInstance.Id">@surveyInstance.Name</a>
+                                            <a asp-area="" asp-controller="Launch" asp-action="Index" asp-route-id="@surveyInstance.Id">@surveyInstance.Name</a>
                                         </h5>
                                     </li>
                                     <li class="list-group-item"><strong>Start: </strong><br>@(surveyInstance.Start)</li>
                                     <li class="list-group-item"><strong>End: </strong><br>@(surveyInstance.End)</li>
-                                    <li class="list-group-item"><strong>Status: </strong><br>@(surveyInstance.Status)</li>
                                 </ul>
                             </div><!-- card-body -->
                         </div><!-- card -->

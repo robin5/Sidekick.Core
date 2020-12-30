@@ -50,11 +50,26 @@ namespace Sidekick.Models
         IEnumerable<TeamStudent> GetTeamStudents(int teamId);
         Team UpdateTeam(Team team);
         Team DeleteTeam(int id);
+        IEnumerable<Team> GetTeams(IEnumerable<int> teamIds);
+        #endregion
+
+        #region Launch
+        Launch AddLaunch(Launch launch);
+        Launch GetLaunch(int id);
+        Launch UpdateLaunch(Launch launch);
+        Launch DeleteLaunch(int id);
+        IEnumerable<TeamTeamMember> GetLaunchTeams(int launchId);
+        #endregion
+
+        #region Student
+        Student GetStudent(string studentId);
+        IEnumerable<Student> GetStudents(IEnumerable<string> studentIds);
+        IEnumerable<Student> GetTeamStudents(IEnumerable<int> teamIds);
         #endregion
 
         IEnumerable<SurveyNameId> GetAllSurveyNameIds();
         IEnumerable<TeamNameId> GetAllTeamNameIds();
-        IEnumerable<LaunchedSurvey> GetAllLaunchedSurveys();
+        IEnumerable<Launch> GetAllLaunches();
         IEnumerable<Student> GetAllStudents();
     }
 }

@@ -2,7 +2,9 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: DashboardController.cs
+// * File: CommentsByViewModel.cs
+// *
+// * Description: View model for CommentsBy view of the LaunchController
 // *
 // * Author: Robin Murray
 // *
@@ -28,44 +30,15 @@
 // * 
 // **********************************************************************************
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using Sidekick.Models;
-using System.Linq;
-using System.Security.Claims;
 
-namespace Sidekick.Controllers
+namespace Sidekick.ViewModels
 {
-    [Authorize(Policy = "SurveyOwner")]
-    public class DashboardController : Controller
+    public class CommentsByViewModel
     {
-        private readonly ILogger<DashboardController> logger;
-        private readonly IRepository repository;
-        private readonly IIdentityHelper identityHelper;
-
-        public DashboardController(
-            ILogger<DashboardController> logger,
-            IRepository repository,
-            IIdentityHelper identityHelper)
-        {
-            this.logger = logger;
-            this.repository = repository;
-            this.identityHelper = identityHelper;
-        }
-
-        public IActionResult Index()
-        {
-            repository.UserId = identityHelper.GetUserId(User);
-
-            var model = new DashboardViewModel
-            {
-                Surveys = repository.GetAllSurveyNameIds(),
-                Teams = repository.GetAllTeamNameIds(),
-                Launches = repository.GetAllLaunches()
-            };
-            return View(model);
-        }
+        public Launch Launch { get; set; }
+        public Team Team { get; set; }
+        public Student Student { get; set; }
+        public SurveyResponse[] SurveyResponses { get; set; }
     }
 }

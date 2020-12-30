@@ -49,10 +49,17 @@ namespace Sidekick.Models
             get { return _nextTeamId++; }
         }
 
+        private int _nextLaunchId = 1;
+        private int NextLaunchId
+        {
+            get { return _nextLaunchId++; }
+        }
+
         List<Survey> surveys = new List<Survey>();
         List<Team> teams = new List<Team>();
         List<LaunchedSurvey> launchedSurveys = null;
         List<Student> students = new List<Student>();
+        List<Launch> launches = new List<Launch>();
 
         public MockRepository()
         {
@@ -191,7 +198,7 @@ namespace Sidekick.Models
                 survey.UserId = UserId;
                 survey.Id = updatedSurvey.Id;
                 survey.Name = updatedSurvey.Name;
-                survey.Questions = updatedSurvey.Questions;
+                survey.Questions = new List<string>(updatedSurvey.Questions);
             }
             return survey;
         }
@@ -218,6 +225,10 @@ namespace Sidekick.Models
         {
             return teams.FirstOrDefault(e => ((e.Id == id) && (e.UserId == UserId)));
         }
+        public IEnumerable<Team> GetTeams(IEnumerable<int> teamIds)
+        {
+            return teams.Where(e => teamIds.Contains(e.Id) && (e.UserId == UserId));
+        }
         public Team UpdateTeam(Team updatedTeam)
         {
             Team team = teams.FirstOrDefault(e => ((e.Id == updatedTeam.Id) && (e.UserId == UserId)));
@@ -226,7 +237,7 @@ namespace Sidekick.Models
                 team.UserId = UserId;
                 team.Id = updatedTeam.Id;
                 team.Name = updatedTeam.Name;
-                team.MemberIds = updatedTeam.MemberIds;
+                team.MemberIds = new List<string>(updatedTeam.MemberIds);
             }
             return team;
         }
@@ -258,6 +269,72 @@ namespace Sidekick.Models
             }
 
             return teamStudents;
+        }
+        #endregion
+
+        #region Launch
+        public virtual Launch AddLaunch(Launch launch)
+        {
+            launch.Id = NextLaunchId;
+            launch.UserId = UserId;
+            launches.Add(launch);
+            return launch;
+        }
+        public Launch DeleteLaunch(int id)
+        {
+            Launch launch = launches.FirstOrDefault(e => ((e.Id == id) && (e.UserId == UserId)));
+            if (null != launch)
+            {
+                launches.Remove(launch);
+            }
+            return launch;
+        }
+        public Launch GetLaunch(int id)
+        {
+            return launches.FirstOrDefault(e => ((e.Id == id) && (e.UserId == UserId)));
+        }
+        public Launch UpdateLaunch(Launch updatedLaunch)
+        {
+            Launch launch = launches.FirstOrDefault(e => ((e.Id == updatedLaunch.Id) && (e.UserId == UserId)));
+            if (null != launch)
+            {
+                launch.UserId = UserId;
+                launch.Id = updatedLaunch.Id;
+                launch.Name = updatedLaunch.Name;
+                launch.SurveyId = updatedLaunch.SurveyId;
+                launch.Start = updatedLaunch.Start;
+                launch.End = updatedLaunch.End;
+                launch.Teams = new List<int>(updatedLaunch.Teams);
+            }
+            return launch;
+        }
+        public IEnumerable<TeamTeamMember> GetLaunchTeams(int launchId)
+        {
+            return null;
+        }
+        #endregion
+
+        #region Student
+        public Student GetStudent(string userId)
+        {
+            return students.FirstOrDefault(e => e.UserId == userId);
+        }
+        public IEnumerable<Student> GetStudents(IEnumerable<string> studentIds)
+        {
+            return students.Where(e => studentIds.Contains(e.UserId));
+        }
+        public IEnumerable<Student> GetTeamStudents(IEnumerable<int> teamIds)
+        {
+            List<string> studentIds = new List<string>();
+
+            var teams = this.GetTeams(teamIds);
+
+            foreach (var team in teams)
+            {
+                studentIds.AddRange(team.MemberIds);
+            }
+
+            return GetStudents(studentIds.Distinct());
         }
         #endregion
 
@@ -295,30 +372,9 @@ namespace Sidekick.Models
             return teamNameIds;
         }
 
-        public IEnumerable<LaunchedSurvey> GetAllLaunchedSurveys()
+        public IEnumerable<Launch> GetAllLaunches()
         {
-            launchedSurveys = new List<LaunchedSurvey>()
-            {
-                #region Launched survey definitions
-                new LaunchedSurvey()
-                {
-                    Id = 1,
-                    Name = "Launched Survey 1",
-                    Start = "2020/12/03",
-                    End = "2020/12/04",
-                    Status = "Unknown"
-                },
-                new LaunchedSurvey()
-                {
-                    Id = 2,
-                    Name = "Launched Survey 2",
-                    Start = "2020/12/05",
-                    End = "2020/12/06",
-                    Status = "Unknown"
-                },
-                #endregion
-            };
-            return launchedSurveys;
+            return launches;
         }
 
         public IEnumerable<Student> GetAllStudents()

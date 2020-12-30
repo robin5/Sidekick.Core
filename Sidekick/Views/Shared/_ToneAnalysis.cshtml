@@ -1,0 +1,20 @@
+﻿@{
+    string ToneIndex = this.ViewData.ContainsKey("ToneIndex") ? this.ViewData["ToneIndex"].ToString() : string.Empty;
+}
+
+<div>
+    <div style="float: left; margin-right: 20px;">
+        <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample@(ToneIndex)" aria-expanded="false" aria-controls="collapseExample">
+            Tone Details
+        </button>
+    </div>
+    <div style="width: 70%; float: left;">
+        <div class="collapse" id="collapseExample@(ToneIndex)">
+            <div class="card card-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident.
+            </div>
+        </div>
+    </div>
+    <div style="clear: left;"></div>
+</div>
+

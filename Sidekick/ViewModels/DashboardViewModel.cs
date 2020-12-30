@@ -38,6 +38,6 @@ namespace Sidekick.Models
     {
         public IEnumerable<SurveyNameId> Surveys { get; set; }
         public IEnumerable<TeamNameId> Teams { get; set; }
-        public IEnumerable<LaunchedSurvey> LaunchedSurveys { get; set; }
+        public IEnumerable<Launch> Launches { get; set; }
     }
 }

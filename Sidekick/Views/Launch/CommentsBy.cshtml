@@ -1,0 +1,62 @@
+﻿@model Sidekick.ViewModels.CommentsByViewModel
+
+@{
+    ViewData["Title"] = "Responses from " + Model.Student;
+}
+
+<div class="container-md dsh-container">
+    <div class="dsh-title">
+        <h2>Comments by @(Model.Student)</h2>
+    </div>
+    <div class="dsh-content container-fluid">
+
+        @{
+            string active = "active";
+            string show = "show";
+            int peerIndex = 0;
+
+            <ul class="nav nav-tabs">
+                @foreach (var sr in Model.SurveyResponses)
+                {
+                    <li class="nav-item">
+                        <a class="nav-link @active" href="#peer-@(peerIndex)" data-toggle="tab">@sr.Peer</a>
+                    </li>
+                    active = "";
+                    peerIndex++;
+                }
+            </ul>
+        }
+
+        <div class="tab-content">
+            @{
+                peerIndex = 0;
+                active = "active";
+                int toneIndex = 0;
+            }
+
+            @foreach (var sr in Model.SurveyResponses)
+            {
+            <div id="peer-@(peerIndex)" class="sur-survey tab-pane fade @active @show">
+
+                @foreach (var qa in sr.QuestionsAnswers)
+                {
+                    <p><strong>@(qa.Question)</strong></p>
+                    <p><strong>Grade: <span class="badge">@(qa.Grade)</span></strong></p>
+                    <div>
+                        <p class="cb-peer-answer">@(qa.Answer)</p>
+                    </div>
+
+                    @await Html.PartialAsync("~/Views/Shared/_ToneAnalysis.cshtml", null, new ViewDataDictionary(ViewData) { { "ToneIndex", toneIndex.ToString() } });
+
+                    <div style="margin: 30px"></div>
+                    <hr />
+                    toneIndex++;
+                }
+            </div>
+                active = "";
+                show = "";
+                peerIndex++;
+            }
+        </div>
+    </div>
+</div>

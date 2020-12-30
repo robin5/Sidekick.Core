@@ -1,0 +1,132 @@
+﻿@*
+    **********************************************************************************
+    * Copyright (c) 2020 Robin Murray
+    **********************************************************************************
+    *
+    * File: Index.cshtml
+    *
+    * Description: Index view for LaunchController
+    *
+    * Author: Robin Murray
+    *
+    **********************************************************************************
+    *
+    * Granting License: The MIT License (MIT)
+    *
+    *   Permission is hereby granted, free of charge, to any person obtaining a copy
+    *   of this software and associated documentation files (the "Software"), to deal
+    *   in the Software without restriction, including without limitation the rights
+    *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    *   copies of the Software, and to permit persons to whom the Software is
+    *   furnished to do so, subject to the following conditions:
+    *   The above copyright notice and this permission notice shall be included in
+    *   all copies or substantial portions of the Software.
+    *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    *   THE SOFTWARE.
+    *
+    **********************************************************************************
+*@
+
+@model Sidekick.ViewModels.LaunchIndexViewModel
+
+@{
+    ViewData["Title"] = "Survey Summary";
+}
+
+@{
+    var id = 1;
+    var teamId = 0;
+}
+
+<div class="container dsh-container">
+    <div class="dsh-title">
+        <h2>Survey Results for @Model.Launch.SurveyId</h2>
+    </div>
+    <div class="dsh-content container-fluid">
+
+        @foreach (var team in Model.Teams)
+        {
+            <div class="sr-team container-fluid">
+                <div>
+                    <button class="btn btn-info" type="button" data-toggle="collapse" data-target="#launched-@team.Id" aria-expanded="false" aria-controls="collapseExample">
+                        <h4>@team.Name&nbsp;&raquo;</h4>
+                    </button>
+                </div><!-- launched surveys button -->
+                <br>
+                <div id="launched-@team.Id" class="collapse container-fluid">
+
+                    @{
+                        IEnumerable<Student> students = Model.Students.Where(e => team.MemberIds.Contains(e.UserId));
+                    }
+
+                    @foreach (var student in students)
+                    {
+                        <div id="sr-student-card-@(id)" class="sr-student-card">
+                            <div class="row">
+                                <div class="col reviewee-content">
+                                    <h6><span class="sr-student-name">@(student.Name) (@(student.UserName))</span></h6>
+                                    <ul>
+                                        <li><a asp-area="" 
+                                               asp-controller="Launch" 
+                                               asp-action="CommentsAbout" 
+                                               asp-route-launchId ="@Model.Launch.Id" 
+                                               asp-route-teamId ="@team.Id" 
+                                               asp-route-userId ="@student.UserId">See comments about @(student.Name)</a>
+                                        </li>
+                                        <li><a asp-area="" 
+                                               asp-controller="Launch" 
+                                               asp-action="CommentsBy" 
+                                               asp-route-launchId ="@Model.Launch.Id" 
+                                               asp-route-teamId ="@team.Id" 
+                                               asp-route-userId ="@student.UserId">Review @student.Name's surveys: @(100 * 0.67)% complete</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div id="pie-chart-@(id)" class="col pie-chart" data="[['A',2],['B',3],['N/A',2]]" style="">
+                                    <figure class="highcharts-figure">
+                                        <div id="container-@(id)"></div>
+                                    </figure>
+                                </div>
+                            </div>
+                        </div>
+                        id = id + 1;
+                    }
+                </div>
+            </div>
+            teamId++;
+        }
+    </div>
+</div>
+@section scripts{
+
+    <script>
+
+        $(function () {
+            // Set the pie chart data for each chart
+            $('.pie-chart').each(function () {
+                // Get the chart data from the chart's div data attribute
+                pieData = eval($(this).attr('data'));
+                // Create the chart using the retrieved data
+                createPieChart($(this).attr('id'), pieData);
+            });
+
+            // Find the width of the largest content div
+            var maxDivWidth = 0;
+            $('.reviewee-content').each(function () {
+                if ($(this).width() > maxDivWidth) {
+                    maxDivWidth = $(this).width();
+                }
+            });
+            // Set all of the content widths to the largest content div width
+            $('.reviewee-content').width(maxDivWidth);
+
+
+        });
+
+    </script>
+}

@@ -1,0 +1,242 @@
+﻿@*
+    **********************************************************************************
+    * Copyright (c) 2020 Robin Murray
+    **********************************************************************************
+    *
+    * File: Create.cshtml
+    *
+    * Description: Create view for LaunchController
+    *
+    * Author: Robin Murray
+    *
+    **********************************************************************************
+    *
+    * Granting License: The MIT License (MIT)
+    *
+    *   Permission is hereby granted, free of charge, to any person obtaining a copy
+    *   of this software and associated documentation files (the "Software"), to deal
+    *   in the Software without restriction, including without limitation the rights
+    *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    *   copies of the Software, and to permit persons to whom the Software is
+    *   furnished to do so, subject to the following conditions:
+    *   The above copyright notice and this permission notice shall be included in
+    *   all copies or substantial portions of the Software.
+    *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    *   IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    *   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    *   AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    *   LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    *   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+    *   THE SOFTWARE.
+    *
+    **********************************************************************************
+*@
+
+@model Sidekick.ViewModels.LaunchCreateViewModel
+
+@{
+    ViewData["Title"] = "Launch Survey";
+}
+
+<div class="container sc-container">
+    <div class="dsh-title">
+        <h2>Launch a Survey</h2>
+    </div>
+
+    <div class="dsh-content">
+        <div class="dsh-content-image">
+            <img src="/images/kyle-hinkson-xyXcGADvAwE-unsplash.jpg" alt="group of baloons launched into the air" class="create-team-image" />
+        </div>
+
+        @* -- Validation Summary -- *@
+
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="alert alert-danger">@Html.ValidationSummary()</div>
+        }
+
+        <form asp-controller="Launch" asp-action="Create" method="post" class="form-launch">
+
+            @* -- Launch Name -- *@
+
+            <label asp-for="LaunchName" class="control-label">Launch Name</label><span>&nbsp;&nbsp;</span>
+            <span asp-validation-for="LaunchName" class="alert-danger validation-msg"></span>
+            <input asp-for="LaunchName"
+                   title="Enter a descriptive name for the this peer evaluation cycle"
+                   placeholder="Enter name for Launch"
+                   class="form-control"
+                   autofocus=""
+                   required />
+            <br />
+
+            @* -- Survey list -- *@
+
+            <label asp-for="Survey" class="control-label">Survey</label>
+            <span>&nbsp;&nbsp;</span>
+            <span asp-validation-for="Survey" class="alert-danger"></span>
+            <br />
+
+            <select id="Survey" name="Survey" class="form-control">
+                <option value="-1">-- select a survey --</option>
+                @foreach (var survey in Model.Surveys)
+                {
+                    if (survey.Id == Model.Survey)
+                    {
+                        <option value="@survey.Id" selected>@survey.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@survey.Id">@survey.Name</option>
+                    }
+                }
+            </select>
+            <br>
+
+            @* -- Start DateTime -- *@
+
+            <label asp-for="StartDateTime" class="control-label"></label><span>&nbsp;&nbsp;</span>
+            <span asp-validation-for="StartDateTime" class="alert-danger validation-msg"></span>
+            <input asp-for="StartDateTime" class="form-control" required />
+            <br>
+
+            @* -- End DateTime -- *@
+
+            <label asp-for="EndDateTime" class="control-label"></label><span>&nbsp;&nbsp;</span>
+            <span asp-validation-for="EndDateTime" class="alert-danger validation-msg"></span>
+            <input asp-for="EndDateTime" class="form-control" required />
+            <hr>
+
+            @* -- Add Team DropDown -- *@
+
+            <label for="Team" class="control-label">Team</label><br />
+            <div class="d-flex team-add-students">
+                <select id="Team" class="form-control flex-grow-1">
+                    <option>-- select a peer group --</option>
+                    @foreach (var team in Model.Teams)
+                    {
+                        <option value="@team.Id">@team.Name</option>
+                    }
+                </select>
+
+                @* -- Add User Button -- *@
+
+                <button type="button"
+                        id="btn-add-team"
+                        class="btn btn-primary"
+                        name="action"
+                        value="add-user"
+                        onclick="ShowRow();"
+                        style="margin-left: 5px; display: inline;">
+                    Add
+                </button>
+            </div>
+
+            @* -- Hidden Peer Group listbox -- *@
+
+            @if (Model.SelectedTeams == null)
+            {
+                Model.SelectedTeams = new List<int>();
+            }
+            <select id="SelectedTeams" name="SelectedTeams" class="form-control" style="display: none" multiple>
+                @foreach (var team in Model.Teams)
+                {
+                    if (Model.SelectedTeams.Contains(team.Id))
+                    {
+                        <option value="@team.Id" selected></option>
+                    }
+                    else
+                    {
+                        <option value="@team.Id"></option>
+                    }
+                }
+            </select>
+
+            @* -- Peer group table -- *@
+
+            <label class="control-label">Peer Groups</label><span>&nbsp;&nbsp;</span>
+            <span asp-validation-for="SelectedTeams" class="alert-danger"></span>
+
+            <table id="tbl-edit-team" class="table table-bordered table-hover tbl-team-create-edit">
+                <thead class="thead-dark thead-team-create-edit">
+                    <tr>
+                        <th class="table-header">Name</th>
+                        <th class="table-header-badge"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var team in Model.Teams)
+                    {
+                        <tr id="tr-@(team.Id)"  class="table-warning" style="@(Model.SelectedTeams.Contains(team.Id) ? "" : "display: none")">
+                            <td id="td-@(team.Id)" class="table-data">@team.Name</td>
+                            <td class="table-data-badge">
+                                <a data-row-id="@(team.Id)" href="#0" onclick="deleteRow(event)" class="badge badge-primary badge-letter-spacing">delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+
+            @* -- Submit and Cancel buttons -- *@
+
+            @await Html.PartialAsync("~/Views/Shared/_SubmitAndCancel.cshtml", new ViewDataDictionary(ViewData) { { "Submit", "Launch Survey" } })
+        </form>
+    </div><!-- dsh-content -->
+</div><!-- container -->
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+            $('#start-date-time').datetimepicker();
+            $('#end-date-time').datetimepicker();
+            //UpdateTableFromListbox();
+        })
+
+        // Transfers model data from hidden listbox into
+        // table containing peers who have been selected
+        function UpdateTableFromListbox() {
+            // Cycle through selected listbox items
+            $("#SelectedTeams option:selected").each(function () {
+                // Use the peers user ID to denote a row in the table
+                var userId = $(this).val();
+                $(`#tr-${userId}`).css("display", "table-row");
+            });
+        }
+
+        // Shows the row corresponding to a selected peers user ID
+        function ShowRow() {
+
+            var userId = $("#Team").val();
+
+            if ("" != userId) {
+
+                var tableRow = $(`#tr-${userId}`);
+
+                if (tableRow.css("display") == "table-row") {
+                    var name = $(`#td-{userId} option[value='${userId}']`).text();
+                    alert(name + " is already a member of the team!");
+                    return;
+                }
+
+                tableRow.css("display", "table-row");
+
+                // Select the list item in the hidden listbox specified by User ID
+                $(`#SelectedTeams option[value='${userId}']`).prop("selected", true);
+            }
+        }
+
+        // Deletes a row from the table and prevents the anchor from firing.
+        function deleteRow(event) {
+
+            var userId = event.target.getAttribute('data-row-id');
+            var rowToDelete = `#tr-${userId}`;
+            $(rowToDelete).css("display", "none");
+            event.preventDefault();
+
+            // Deselect the list item in the hidden listbox specified by User ID
+            $(`#SelectedTeams option[value='${userId}']`).prop("selected", false);
+        }
+    </script>
+}

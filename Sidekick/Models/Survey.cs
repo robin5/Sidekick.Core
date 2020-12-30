@@ -7,9 +7,9 @@ namespace Sidekick.Models
 {
     public class Survey
     {
-        public string UserId;
-        public int Id;
-        public string Name;
-        public IEnumerable<string> Questions;
+        public string UserId { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public IEnumerable<string> Questions { get; set; }
     }
 }

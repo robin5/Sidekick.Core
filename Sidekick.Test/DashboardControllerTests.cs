@@ -66,7 +66,7 @@ namespace Sidekick.Test
 
             var surveys = repository.GetAllSurveyNameIds();
             var teams = repository.GetAllTeamNameIds();
-            var launchedSurveys = repository.GetAllLaunchedSurveys();
+            var launchedSurveys = repository.GetAllLaunches();
 
             var dashboardController = new DashboardController(null, repository, IdentityHelper);
 
@@ -80,7 +80,7 @@ namespace Sidekick.Test
             
             Assert.Equal(surveys.Count(), model.Surveys.Count());
             Assert.Equal(teams.Count(), model.Teams.Count());
-            Assert.Equal(launchedSurveys.Count(), model.LaunchedSurveys.Count());
+            Assert.Equal(launchedSurveys.Count(), model.Launches.Count());
         }
     }
 }

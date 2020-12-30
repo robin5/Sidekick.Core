@@ -28,6 +28,8 @@
 // * 
 // **********************************************************************************
 
+using System.Collections.Generic;
+
 namespace Sidekick.Models
 {
     public class LaunchedSurvey
@@ -37,5 +39,8 @@ namespace Sidekick.Models
         public string Start { get; set; }
         public string End { get; set; }
         public string Status { get; set; }
+        public IEnumerable<int> Teams { get; set; }
+        public int Survey { get; set; }
+
     }
 }

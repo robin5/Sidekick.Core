@@ -2,7 +2,9 @@
 // * Copyright (c) 2020 Robin Murray
 // **********************************************************************************
 // *
-// * File: DashboardController.cs
+// * File: TeamCreateViewModel.cs
+// *
+// * Description: View model for the TeamController for creating a team
 // *
 // * Author: Robin Murray
 // *
@@ -28,44 +30,38 @@
 // * 
 // **********************************************************************************
 
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Sidekick.Models;
-using System.Linq;
-using System.Security.Claims;
+using Sidekick.Validations;
 
-namespace Sidekick.Controllers
+
+namespace Sidekick.ViewModels
 {
-    [Authorize(Policy = "SurveyOwner")]
-    public class DashboardController : Controller
+    public class LaunchCreateViewModel
     {
-        private readonly ILogger<DashboardController> logger;
-        private readonly IRepository repository;
-        private readonly IIdentityHelper identityHelper;
+        public IEnumerable<SurveyNameId> Surveys { get; set; }
+        public IEnumerable<TeamNameId> Teams { get; set; }
 
-        public DashboardController(
-            ILogger<DashboardController> logger,
-            IRepository repository,
-            IIdentityHelper identityHelper)
-        {
-            this.logger = logger;
-            this.repository = repository;
-            this.identityHelper = identityHelper;
-        }
+        [NonNullEmptyOrWhiteSpace(ErrorMessage = "Please enter a Launch Name.")]
+        public string LaunchName { get; set; }
 
-        public IActionResult Index()
-        {
-            repository.UserId = identityHelper.GetUserId(User);
+        [NoneSelected("Survey not selected")]
+        public int Survey { get; set; }
 
-            var model = new DashboardViewModel
-            {
-                Surveys = repository.GetAllSurveyNameIds(),
-                Teams = repository.GetAllTeamNameIds(),
-                Launches = repository.GetAllLaunches()
-            };
-            return View(model);
-        }
+        [NonNullEmptyOrWhiteSpace(ErrorMessage = "Please enter a start date and time.")]
+        [DateTime]
+        [Display(Name = "Start date and time")]
+        public string StartDateTime { get; set; }
+
+        [NonNullEmptyOrWhiteSpace(ErrorMessage = "Please enter an end date and time.")]
+        [DateTime]
+        [Display(Name = "End date and time")]
+        public string EndDateTime { get; set; }
+
+        [MinCount(1, ErrorMessage = "Please add one or more Peer Groups to send.")]
+        public IEnumerable<int> SelectedTeams { get; set; }
     }
 }
