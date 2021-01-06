@@ -34,7 +34,8 @@
 
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Identity.EntityFrameworkCore
-@inject SignInManager<IdentityUser> SignInManager
+@using Sidekick.Data
+@inject SignInManager<ApplicationUser> SignInManager
 
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark border-bottom box-shadow mb-3">
